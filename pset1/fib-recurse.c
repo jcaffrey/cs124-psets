@@ -5,7 +5,7 @@ int count = 0;
 int fib(int n);
 
 int main(void) {
-	printf("%i\n", fib(10));
+	printf("%i\n", fib(47));
 	printf("got here with %i calls to fib\n", count);
 	return;
 }
