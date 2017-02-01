@@ -1,5 +1,7 @@
 #include <stdio.h>
 
+
+#define FLOW 65536
 int count = 0;
 
 int fib(int n);
@@ -17,5 +19,5 @@ int fib(int n) {
 	else if(n == 1)
 		return 1;
 	else
-		return fib(n - 1) + fib(n - 2);
+		return (fib(n - 1) + fib(n - 2))%FLOW;
 }
