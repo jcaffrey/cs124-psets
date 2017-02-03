@@ -2,25 +2,29 @@
 
 #define FLOW 65536
 
-int main(void) {
-	printf("%i\n", fib(1000000000000000000));  // why can't i do bigger numbers than this? - trying to run for a minute..
+unsigned int fib(unsigned int n);
+
+unsigned int main(void) 
+{
+	printf("%d\n", fib(100));  //10000000000000 why can't i do bigger numbers than this? - trying to run for a minute..
 	return;
 }
 
-int fib(int n) {
-	int prevPrev = 0; //~A[0]=0
-	int prev = 1;		//!A[1]=1
-	int curr = n;
-//	int A[3]; // need to dynamically allocate space- BUT can just store the last 3 values
-//	A[0] = 0;
-//	A[1] = 1;
+unsigned int fib(unsigned int n) {
+	unsigned int prevPrev = 0;
+	unsigned int prev = 1;
+	unsigned int curr;
+	if(n < 2)
+	{
+		curr = n;
+	}
 
-	int i, tmp;
-	for(i = 2; i <= n; i++) {
-		curr = (prevPrev + prev)%FLOW;  // curr gets value of this addition		
+	unsigned int i;
+	for(i = 2; i <= n; i++) 
+	{
+		curr = (prevPrev + prev)%FLOW;  		
 		prevPrev = prev;
-		prev = curr;				//prev gets value of curr
-		//prevPrev = tmp;
+		prev = curr;				
 	}	
 	return curr;
 }
