@@ -30,6 +30,14 @@
 	// choose some values of n
 	// for each value of n, run code on several randomly chosen instances of size n and compute avg value for runs
 	// give a function f(n) that describes the plot, including constant factors
+		// Run your program for n = 128; 256; 512; 1024; 2048; 4096; 8192; 16384; 32768; 65536; 131072, and larger
+		// values, if your program runs fast enough. (Having your code handle up to at least n = 131072 vertices
+		// is one of the assignment requirements; going up to only smaller n will hurt your score on the assignment.
+		// Getting up to 65536 will result in only a very small loss of points.) Run each value of n at least five times
+		// and take the average. (Make sure you re-seed the random number generator appropriately!)
+
+
+// GOAL 3 : design tests that prove correctness
 
 
 int main(int argc, char* argv[]) {
