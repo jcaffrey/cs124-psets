@@ -63,11 +63,13 @@ int main(int argc, char* argv[]) {
 	//printf("%i\n", (int) *argv[3]);
 	int dimension = atoi(argv[4]);
 
-	generateGraph1(10);
+	if(dimension == 0)
+		generateGraph1(512);
+	//if(dimension == 2)
+	//	generateBoxGraph(10);
 }
 
 double rand0to1(void) {
-
 	return (double) rand() / (double) RAND_MAX;
 }
 
@@ -75,9 +77,8 @@ void generateGraph1(int n) {
 	double adj_mat[n][n];
 	int i, j;
 	for(i = 0; i < n; i++) {
-		for(j = 0; j< n; j++) {
+		for(j = 0; j < n; j++) {
 			if (i == j) {
-				printf("got here i ==j \n");
 				adj_mat[i][j] = 0.0;
 			}
 			else {
@@ -85,5 +86,11 @@ void generateGraph1(int n) {
 			}
 		}
 	}
+	for(i = 0; i < n; i++) {
+		for(j = 0; j< n; j++) {
+			printf("%f\n", adj_mat[i][j]);
+		}
+	}
+
 }
 
