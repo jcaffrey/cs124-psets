@@ -1,4 +1,3 @@
-#include <stdio.h>
 /**
 *  
 *
@@ -39,10 +38,18 @@
 
 // GOAL 3 : design tests that prove correctness
 
+#include <stdio.h>
+#include <stdlib.h>
+#include <time.h>
+#include <math.h>
+
+void generateGraph1(int n);
+double randBelow1(void);
 
 int main(int argc, char* argv[]) {
 	// ./randmst 0 numpoints numtrials dimension
 	//printf("%i\n", argc);
+
 	if (argc != 5) {
 		printf("usage: ./randmst 0 numpoints numtrials dimension\n");
 		return 1;
@@ -50,4 +57,20 @@ int main(int argc, char* argv[]) {
 	for (int i = 0; i < argc; i++) {
 		printf(" argv of %i is %s\n", i, argv[i]);
 	}
+	//printf("%i\n", (int) *argv[3]);
+	int dimension = atoi(argv[4]);
+
+	generateGraph1(dimension);
 }
+
+double randBelow1(void) {
+	time_t t; // to pass to srand to seed..   
+	srand((unsigned) time(&t));
+
+	return (double) rand() / (double) RAND_MAX;
+}
+
+void generateGraph1(int n) {
+	printf("%f\n", randBelow1());
+}
+
