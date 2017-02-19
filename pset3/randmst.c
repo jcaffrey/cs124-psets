@@ -63,7 +63,7 @@ int main(int argc, char* argv[]) {
 	generateGraph1(dimension);
 }
 
-double randBelow1(void) {
+double rand0to1(void) {
 	time_t t; // to pass to srand to seed..   
 	srand((unsigned) time(&t));
 
@@ -71,6 +71,7 @@ double randBelow1(void) {
 }
 
 void generateGraph1(int n) {
-	printf("%f\n", randBelow1());
+	printf("%f\n", rand0to1());
+	int r = sqrt(n);
 }
 
