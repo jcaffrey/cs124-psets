@@ -49,6 +49,9 @@ double randBelow1(void);
 int main(int argc, char* argv[]) {
 	// ./randmst 0 numpoints numtrials dimension
 	//printf("%i\n", argc);
+	time_t t; // to pass to srand to seed..   
+	srand((unsigned) time(&t));
+
 
 	if (argc != 5) {
 		printf("usage: ./randmst 0 numpoints numtrials dimension\n");
@@ -60,18 +63,27 @@ int main(int argc, char* argv[]) {
 	//printf("%i\n", (int) *argv[3]);
 	int dimension = atoi(argv[4]);
 
-	generateGraph1(dimension);
+	generateGraph1(10);
 }
 
 double rand0to1(void) {
-	time_t t; // to pass to srand to seed..   
-	srand((unsigned) time(&t));
 
 	return (double) rand() / (double) RAND_MAX;
 }
 
 void generateGraph1(int n) {
-	printf("%f\n", rand0to1());
-	int r = sqrt(n);
+	double adj_mat[n][n];
+	int i, j;
+	for(i = 0; i < n; i++) {
+		for(j = 0; j< n; j++) {
+			if (i == j) {
+				printf("got here i ==j \n");
+				adj_mat[i][j] = 0.0;
+			}
+			else {
+				adj_mat[i][j] = rand0to1();
+			}
+		}
+	}
 }
 
