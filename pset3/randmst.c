@@ -1,5 +1,5 @@
 /**
-*  
+*
 *
 *
 *
@@ -43,13 +43,13 @@
 #include <time.h>
 #include <math.h>
 
-void generateGraph1(int n);
+void generateGraph0(int n);
 double randBelow1(void);
 
 int main(int argc, char* argv[]) {
 	// ./randmst 0 numpoints numtrials dimension
 	//printf("%i\n", argc);
-	time_t t; // to pass to srand to seed..   
+	time_t t; // to pass to srand to seed..
 	srand((unsigned) time(&t));
 
 
@@ -64,9 +64,9 @@ int main(int argc, char* argv[]) {
 	int dimension = atoi(argv[4]);
 
 	if(dimension == 0)
-		generateGraph1(512);
-	//if(dimension == 2)
-	//	generateBoxGraph(10);
+		generateGraph0(512);
+	// if(dimension == 2)
+	// 	generateBoxGraph(10);
 }
 
 double rand0to1(void) {
@@ -93,4 +93,3 @@ void generateGraph1(int n) {
 	}
 
 }
-
