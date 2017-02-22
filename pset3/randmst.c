@@ -1,58 +1,32 @@
-/**
-*
-*
-*
-*
-*
-*
-*
-*/
-
-
-//TODO:
-// generate the 3 types of graphs:
-
-	// • Complete graphs on n vertices, where the weight of each edge is a real number chosen uniformly at
-	// random on [0, 1].
-	// • Complete graphs on n vertices, where the vertices are points chosen uniformly at random inside the
-	// unit square. (That is, the points are (x, y), with x and y each a real number chosen uniformly at
-	// random from [0, 1].) The weight of an edge is just the Euclidean distance between its endpoints.
-	// • Complete graphs on n vertices, where the vertices are points chosen uniformly at random inside the
-	// unit cube (3 dimensions) and hypercube (4 dimensions). As with the unit square case above, the
-	// weight of an edge is just the Euclidean distance between its endpoints.
-
-// GOAL 1 : determine, for each type of graph, how the avg weight of the MST grows as a fn of n
-	// implement an MST algo
-	// implement procedures that generate the random graphs
-
-// GOAL 2 : for each type of graph, plot the values
-	// choose some values of n
-	// for each value of n, run code on several randomly chosen instances of size n and compute avg value for runs
-	// give a function f(n) that describes the plot, including constant factors
-		// Run your program for n = 128; 256; 512; 1024; 2048; 4096; 8192; 16384; 32768; 65536; 131072, and larger
-		// values, if your program runs fast enough. (Having your code handle up to at least n = 131072 vertices
-		// is one of the assignment requirements; going up to only smaller n will hurt your score on the assignment.
-		// Getting up to 65536 will result in only a very small loss of points.) Run each value of n at least five times
-		// and take the average. (Make sure you re-seed the random number generator appropriately!)
-
-
-// GOAL 3 : design tests that prove correctness
-
 #include <stdio.h>
 #include <stdlib.h>
 #include <time.h>
 #include <math.h>
 
+#include "graph.h"
+
+// TODO: implement adjList representation
+
 void generateGraph0(int n);
 double randBelow1(void);
 
+struct graph {
+    int n;              /* number of vertices */
+    int m;              /* number of edges */
+    struct successors {
+        int d;          /* number of successors */
+        int len;        /* number of slots in array */
+        char is_sorted; /* true if list is already sorted */
+        struct edge {
+            int sink;           /* other end of edge */
+            int weight;         /* used for shortest-path algorithms */
+        } list[1];    /* actual list of successors */
+    } *alist[1];
+};
+
 int main(int argc, char* argv[]) {
-	// ./randmst 0 numpoints numtrials dimension
-	//printf("%i\n", argc);
 	time_t t; // to pass to srand to seed..
 	srand((unsigned) time(&t));
-
-
 	if (argc != 5) {
 		printf("usage: ./randmst 0 numpoints numtrials dimension\n");
 		return 1;
@@ -60,14 +34,102 @@ int main(int argc, char* argv[]) {
 	for (int i = 0; i < argc; i++) {
 		printf(" argv of %i is %s\n", i, argv[i]);
 	}
-	//printf("%i\n", (int) *argv[3]);
 	int dimension = atoi(argv[4]);
 
 	if(dimension == 0)
 		generateGraph0(512);
-	// if(dimension == 2)
-	// 	generateBoxGraph(10);
 }
+
+/* create a new graph with n vertices labeled 0..n-1 and no edges */
+Graph
+graph_create(int n)
+{
+    Graph g;
+    int i;
+
+    g = malloc(sizeof(struct graph) + sizeof(struct successors *) * (n-1));
+    assert(g);
+
+    g->n = n;
+    g->m = 0;
+
+    for(i = 0; i < n; i++) {
+        g->alist[i] = malloc(sizeof(struct successors));
+        assert(g->alist[i]);
+
+        g->alist[i]->d = 0;
+        g->alist[i]->len = 1;
+        g->alist[i]->is_sorted= 1;
+    }
+    
+    return g;
+}
+
+/* free all space used by graph */
+void
+graph_destroy(Graph g)
+{
+    int i;
+
+    for(i = 0; i < g->n; i++) free(g->alist[i]);
+    free(g);
+}
+
+/* add an edge to an existing graph */
+void
+graph_add_weighted_edge(Graph g, int u, int v, int wt)
+{
+    assert(u >= 0);
+    assert(u < g->n);
+    assert(v >= 0);
+    assert(v < g->n);
+
+    /* do we need to grow the list? */
+    while(g->alist[u]->d >= g->alist[u]->len) {
+        g->alist[u]->len *= 2;
+        g->alist[u] =
+            realloc(g->alist[u], 
+                sizeof(struct successors) + sizeof(struct edge) * (g->alist[u]->len - 1));
+    }
+
+    /* now add the new sink */
+    g->alist[u]->list[g->alist[u]->d].sink = v;
+    g->alist[u]->list[g->alist[u]->d].weight = wt;
+    g->alist[u]->d++;
+    g->alist[u]->is_sorted = 0;
+
+    /* bump edge count */
+    g->m++;
+}
+/* return the number of vertices in the graph */
+int
+graph_vertex_count(Graph g)
+{
+    return g->n;
+}
+
+/* invoke f on all edges (u,v) with source u */
+/* supplying data as final parameter to f */
+void
+graph_foreach_weighted(Graph g, int source,
+    void (*f)(Graph g, int source, int sink, int weight, void *data),
+    void *data)
+{
+    int i;
+
+    assert(source >= 0);
+    assert(source < g->n);
+
+    for(i = 0; i < g->alist[source]->d; i++) {
+        f(g, source, 
+                g->alist[source]->list[i].sink,
+                g->alist[source]->list[i].weight,
+                data);
+    }
+}
+
+// READ DIJKSTRA stuff..
+
 
 double rand0to1(void) {
 	return (double) rand() / (double) RAND_MAX;
