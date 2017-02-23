@@ -1,14 +1,3 @@
-/**
-*
-*
-*
-*
-*
-*
-*
-*/
-
-
 //TODO:
 // generate the 3 types of graphs:
 
@@ -43,7 +32,12 @@
 #include <time.h>
 #include <math.h>
 
-void generateGraph0(int n);
+struct graph {
+	int n;
+
+}
+
+void populateGraph(int n);  // implemented as adjacency list with dynamically resizing array to store edges
 double randBelow1(void);
 
 int main(int argc, char* argv[]) {
@@ -73,23 +67,46 @@ double rand0to1(void) {
 	return (double) rand() / (double) RAND_MAX;
 }
 
-void generateGraph1(int n) {
-	double adj_mat[n][n];
-	int i, j;
-	for(i = 0; i < n; i++) {
-		for(j = 0; j < n; j++) {
-			if (i == j) {
-				adj_mat[i][j] = 0.0;
-			}
-			else {
-				adj_mat[i][j] = rand0to1();
-			}
-		}
-	}
-	for(i = 0; i < n; i++) {
-		for(j = 0; j< n; j++) {
-			printf("%f\n", adj_mat[i][j]);
-		}
-	}
 
-}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+// void generateGraph1(int n) {
+// 	double adj_mat[n][n];
+// 	int i, j;
+// 	for(i = 0; i < n; i++) {
+// 		for(j = 0; j < n; j++) {
+// 			if (i == j) {
+// 				adj_mat[i][j] = 0.0;
+// 			}
+// 			else {
+// 				adj_mat[i][j] = rand0to1();
+// 			}
+// 		}
+// 	}
+// 	for(i = 0; i < n; i++) {
+// 		for(j = 0; j< n; j++) {
+// 			printf("%f\n", adj_mat[i][j]);
+// 		}
+// 	}
+//
+// }
