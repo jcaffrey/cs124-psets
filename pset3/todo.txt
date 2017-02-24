@@ -18,7 +18,7 @@
 		// implement adj list representation
 	// implement an MST algo
 		// implement PQ
-		// implement Prim's 
+		// implement Prim's
 
 // GOAL 2 : for each type of graph, plot the values
 	// choose some values of n
@@ -32,3 +32,12 @@
 
 
 // GOAL 3 : design tests that prove correctness
+
+
+
+
+// methods to create different types of graphs (adjLists)
+
+// methods to run prim's algorithm
+
+// methods to print
