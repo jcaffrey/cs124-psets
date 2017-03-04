@@ -24,24 +24,15 @@ for line in reversed(open('buffy.txt').readlines()):
             tmp_word_length += len(words[k-1])
             tmp_words.append(words[k-1])
             if M - len(word) - tmp_word_length - space_ct >= 0:
-                print 'tmp words of ' + word + ' are ' + str(tmp_words) + ' with space-ct ' +str(space_ct)+ ' at index k ' + str(k) + ' w/ pen: '
-                print M - len(word) - tmp_word_length - space_ct #+ p_store[word_ct - k -1]
+                #print 'tmp words of ' + word + ' are ' + str(tmp_words) + ' with space-ct ' +str(space_ct)+ ' at index k ' + str(k) + ' w/ pen: '
+                #print M - len(word) - tmp_word_length - space_ct #+ p_store[word_ct - k -1]
                 tmp.append(M - len(word) - tmp_word_length - space_ct)
             # tmp.append(M - len(word) - tmp_word_length - space_ct + p_store[word_ct - k])
         # update the penalty cost for that word (act as if 'pulling up' all other possible words) need to know num of words that can fit on next line -->gives spaces, error for that line-->take the min of all cases
         try:
-            # print tmp
-            #FIGURE OUT HERE WHAT MIN TELLS US ABOUT # OF WORDS TO PULL UP...
-            # num_words = 0
-            # for i in tmp:
-            #     num_words += 1
-
-            # print 'best num words is ' +str(len(tmp)) + ' and best error is ' + str(tmp[len(tmp)-1])
-
-            # find min of possible words and the penalty of THAT word
             # idx = 0
             # for i in tmp:
-            #     print tmp(idx)
+            #     print 'got here!' + str(tmp(idx))
             #     idx += 1
 
             p_store[word_ct] = (tmp[len(tmp) - 1], word_ct - len(tmp))
@@ -56,44 +47,21 @@ print p_store
 start = max(p_store.keys())
 
 next = p_store[start][1]
+print start, next
 tmp = next
 tot_error = 0
 try:
     while words[start-1]: # and start-1 != tmp:  #and p_store[start]:
+        tot_error += p_store[start][0]
+
         # print p_store[start][0]
         # tot_error += p_store[start][0]
         while start - next >= 0: # and p_store[start]:
             print words[start - 1],
             start -= 1
-        tot_error += p_store[start][0]
-        print p_store[start][0],
+        print p_store[start + 1][0],# p_store[start+1][1], start+1,
         print
         next = p_store[next][1]
         # print 'next val is ' +str(next) + ' and start val is ' +str(start)
-    # print tot_error
 except:
-    #print p_store[start+2][0]
     print tot_error
-
-# while start >0:
-#     print words[start -1]
-#     print p_store[start]
-#     start -= p_store[start][1]
-
-
-#
-# for k in reversed(p_store.keys()):
-#     print 'line k is ' +str(k) + ' error of line k is ' +str(p_store[k][0]) +' num words '  + str(p_store[k][1])
-#     print 'updating k by num words ' + str(p_store[k][1])
-#     k += p_store[k][1]
-
-
-#reversed(p_store.keys()):
-#     # only ad
-# for k in d costs of each line...then cube that val
-#     print k
-#     print 'best num words is ' + str(len(tmp)) + ' and best error is ' + str(tmp[len(tmp) - 1])
-#
-#     tot += p_store[k][0]
-# print tot
-# print words
