@@ -1,10 +1,9 @@
 word_ct = 0
 p_store = {}  # key: word_ct/index of word, value: penalty of that word being the start of a line and the num words following it
                     # , ? - also store line_num?
-M = 72
+M = 40
 
 words = []
-line_br = {} # key: line_num, value: word at end of line
 br = []
 
 for line in reversed(open('buffy.txt').readlines()):
@@ -37,9 +36,14 @@ for line in reversed(open('buffy.txt').readlines()):
             # for i in tmp:
             #     num_words += 1
 
-
-
             # print 'best num words is ' +str(len(tmp)) + ' and best error is ' + str(tmp[len(tmp)-1])
+
+            # find min of possible words and the penalty of THAT word
+            # idx = 0
+            # for i in tmp:
+            #     print tmp(idx)
+            #     idx += 1
+
             p_store[word_ct] = (tmp[len(tmp) - 1], word_ct - len(tmp))
         except:
             pass
@@ -48,24 +52,27 @@ for line in reversed(open('buffy.txt').readlines()):
         word_ct += 1
 
 print p_store
-tot = 0
+
 start = max(p_store.keys())
 
 next = p_store[start][1]
+tmp = next
 tot_error = 0
 try:
-    while words[start-1] and start-1 != -1:  #and p_store[start]:
+    while words[start-1]: # and start-1 != tmp:  #and p_store[start]:
         # print p_store[start][0]
         # tot_error += p_store[start][0]
         while start - next >= 0: # and p_store[start]:
             print words[start - 1],
             start -= 1
         tot_error += p_store[start][0]
-        print p_store[start][0]
+        print p_store[start][0],
+        print
         next = p_store[next][1]
         # print 'next val is ' +str(next) + ' and start val is ' +str(start)
     # print tot_error
 except:
+    #print p_store[start+2][0]
     print tot_error
 
 # while start >0:
