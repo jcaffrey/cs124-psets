@@ -1,7 +1,7 @@
 word_ct = 0
 p_store = {}  # key: word_ct/index of word, value: penalty of that word being the start of a line and the num words following it
                     # , ? - also store line_num?
-M = 40
+M = 72
 
 words = []
 line_br = {} # key: line_num, value: word at end of line
@@ -36,20 +36,11 @@ for line in reversed(open('buffy.txt').readlines()):
             # num_words = 0
             # for i in tmp:
             #     num_words += 1
-            print 'best num words is ' +str(len(tmp)) + ' and best error is ' + str(tmp[len(tmp)-1])
+
+
+
+            # print 'best num words is ' +str(len(tmp)) + ' and best error is ' + str(tmp[len(tmp)-1])
             p_store[word_ct] = (tmp[len(tmp) - 1], word_ct - len(tmp))
-            # min_k = 0
-            # tmp_min = tmp[0]
-            # print tmp
-            # for i in tmp:
-            #     print i
-            # t = min(tmp)
-            # tmp_new = []
-            # for ele in tmp:
-            #     if M - ele >= 0:
-            #         tmp_new.append(M-ele)
-            # p_store[word_ct] = min(tmp_new)
-            # print t, tmp_new
         except:
             pass
 
@@ -61,13 +52,21 @@ tot = 0
 start = max(p_store.keys())
 
 next = p_store[start][1]
-for line in range(15):
-    while start - next >= 0:
-        print words[start - 1],
-        start -= 1
-    next = p_store[next][1]
-    print
-
+tot_error = 0
+try:
+    while words[start-1] and start-1 != -1:  #and p_store[start]:
+        # print p_store[start][0]
+        # tot_error += p_store[start][0]
+        while start - next >= 0: # and p_store[start]:
+            print words[start - 1],
+            start -= 1
+        tot_error += p_store[start][0]
+        print p_store[start][0]
+        next = p_store[next][1]
+        # print 'next val is ' +str(next) + ' and start val is ' +str(start)
+    # print tot_error
+except:
+    print tot_error
 
 # while start >0:
 #     print words[start -1]
@@ -80,7 +79,8 @@ for line in range(15):
 #     print 'line k is ' +str(k) + ' error of line k is ' +str(p_store[k][0]) +' num words '  + str(p_store[k][1])
 #     print 'updating k by num words ' + str(p_store[k][1])
 #     k += p_store[k][1]
-print max(p_store.keys())
+
+
 #reversed(p_store.keys()):
 #     # only ad
 # for k in d costs of each line...then cube that val
