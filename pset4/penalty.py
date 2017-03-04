@@ -8,8 +8,6 @@ p_store = {} # holds line num as key and (word, word_ct) tuple as value
 
 
 def p(word, i, line, M):
-    # fill first line - base case
-    #loop through each word that can be pulled up
     print 'in p'
     try:
         num_on_line = len(p_store[line] / 2)
@@ -36,6 +34,8 @@ word_ct = 0
 tot_penalty = 0
 line_num = 0
 
+# need to store - total penalty
+P[i] = min(P[j]+COST(i,j) for j in range(i+1, n+1), )
 for line in reversed(open('buffy.txt').readlines()):
     word_ind = 0
     hmm = {}
