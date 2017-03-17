@@ -9,6 +9,8 @@
 #include <time.h>
 #include <sys/time.h>
 
+#define CUT 32
+
 // me(m, sz, i, j)
 //    Return a pointer to matrix element `m[i][j]` -- the element
 //    at row `i` and column `j`. The matrix is square with dimension
@@ -62,25 +64,21 @@ int main(int argc, char* argv[]) {
         int j = 0;
         int tot = 0;
         int val;
-        int a_ct = 0;
-        int b_ct = 0;
 
         while(fscanf(in, "%d", &val) != EOF) 
         {
             if(i == j)
             {
-               // printf("%d\n", val);
+                printf("%d\n", val);
             }
             if(tot < d * d) 
             {
                 // add to matrix A
-                a_ct++;
                 *me(a, d, i, j) = val;
             }
             if(tot >= d*d && tot < 2 * d *d)
             {
                 // add to matrix B
-                b_ct++;
                 *me(b, d, i, j) = val;
 
             }
@@ -95,6 +93,7 @@ int main(int argc, char* argv[]) {
             if(tot == d * d)
                 i = 0;
         }
+        // print input matrices
 /*
         // print matrices
         for(i = 0; i < d; i++)
@@ -108,9 +107,11 @@ int main(int argc, char* argv[]) {
         // compute `c = a x b`
         conventional_multiply(c, (size_t)d, a, b);  // this is how to call..
 
-        for(i = 0; i < d; i++)
+        // print result matrix
+/*        for(i = 0; i < d; i++)
             for(j = 0; j < d; j++)
                 printf("%d\n", *me(c, (size_t)d, (size_t)i, (size_t)j));
+*/        
         free(a);
         free(b);
         free(c);

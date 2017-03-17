@@ -1,0 +1,91 @@
+Strassen's method                        4.2.4
+
+ The efficiency of Strassen's method is due to
+the reduction of the branching factor from 8
+to 7 in the recursion tree.  It trades one
+matrix multiplication for matrix additions,
+which take less time.  It has four steps:
+
+1. Divide A, B, and C into n/2 x n/2 matrices
+  as in MATRIX-MULTIPLY-RECURSE(), using index
+  calculations, thus taking Theta(1) time.
+
+2. Create 10 n/2 x n/2 matrices S_1, S_2, ...
+  S_10 each of which is a sum or difference of
+  submatrices of A and B created in step 1.
+  This takes Theta(n^2) time.
+
+3.  Recursively compute seven n/2 x n/2 matrix
+  products P_1, P-2, ... P_7 of n/2 x n/2
+  matrices from steps 1 and 2, in 7T(n/2) time
+
+4.  Compute submatrices C_11, C_12, C_21, and
+  C_22 by adding and subtracting various P_i
+  matrices.  This takes Theta(n^2) time.
+
+ In the base case, when n = 1, we do a scalar
+multiplication as before, so T(1) =  Theta(1).
+For n > 1, steps 1, 2, and 4 take a total of
+Theta(n^2) time, and step 3 takes 7T(n/2) time
+giving the recurrence for Strassen's method:
+
+T(n) = / Theta(1)             if n = 1   4.2.5
+       \ 7T(n/2) + Theta(n^2) if n > 1
+
+By the Master Method of Section 4.5, this
+recurrence has solution T(n) = Theta(n^lg(7)).
+ Here are the details of steps 2-4:
+
+Step 2:
+
+S_1  = B_12 - B_22
+S_2  = A_11 + A_12
+S_3  = A_21 + A_22
+S_4  = B_21 - B_11
+S_5  = A_21 + A_22
+S_6  = B_11 + B_22
+S_7  = A_12 - A_22
+S_8  = B_21 + B_22
+S_9  = A_11 - A_21
+S_10 = B_11 + B_12
+
+Step 3:
+
+P_1 = A_11 * S_1   ( = A_11*B_12 - A_11*B_22 )
+P_2 = S_2 * B_22   ( = A_11*B_22 + A_12*B_22 )
+P_3 = S_3 * B_11   ( = A_21*B_11 + A_22*B_11 )
+P_4 = A_22 * S_4   ( = A_22*B_21 - A_22*B_11 )
+P_5 = S_5 * S_6    ( = A_11*B_11 + A_11*B_22
+                     + A_22*B_11 + A_22*B_22 )
+P_6 = S_7 * S_8    ( = A_12*B_21 + A_12*B_22
+                     - A_22*B_21 - A_22*B_22 )
+P_7 = S_9 * S_10   ( = A_11*B_11 + A_11*B_12
+                     - A_21*B_11 - A_21*B_12 )
+
+Step 4:                                  4.2.6
+
+C_11 = P_5 + P_4 - P_2 + P_6  ( = A_11*B_11 +
+  A_11*B_22 + A_22*B_11 + A_22*B_22 +
+  + A_22*B_21 - A_22*B_11 
+  - A_11*B_22 - A_12*B_22       + A_12*B_21 +
+  A_12*B_22 + A_22*B_21 + A_22*B_22
+  = A_11*B_11 + A_12*B_21 as desired )
+
+C_12 = P_1 + P_2  ( = A_11*B_12 - A_11*B_22
+  + A_11*B_22 + A_12*B_22
+  = A_11*B_12 + A_12*B_22 as desired )
+
+C_21 = P_3 + P_4  ( = A_21*B_11 + A_22*B_11
+  + A_22*B_21 - A_22*B_11
+  = A_21*B_11 + A_22*B_21 as desired )
+
+C_22 = P_5 + P_1 - P_3 - P_7  ( = A_11*B_11 +
+  A_11*B_22 + A_22*B_11 + A_22*B_22
+  + A_11*B_12 - A_11*B_22
+  - A_21*B_11 + A_22*B_11       - A_11*B_11
+  - A_11*B_12 - A_22*B_11 - A_22*B_12
+  = A_22*B_22 + A_21*B_12 as desired )
+
+Step 4 uses 8 matrix additions/subtractions,
+for Theta(n^2) time.  Exercise 4.2-2 asks for
+the pseudocode for Strassen's algorithm.
