@@ -22,7 +22,8 @@ static inline int* me(int* m, size_t sz, size_t i, size_t j) {
 // fast_matrix_multiply(c, sz, a, b)
 //    `a`, `b`, and `c` are square matrices with dimension `sz`.
 //    Computes the matrix product `a x b` and stores it in `c`.
-void conventional_multiply(int* c, size_t sz, int* a, int* b) {
+void conventional_multiply(int* c, size_t sz, int* a, int* b) 
+{
     // clear `c`
     for (size_t i = 0; i < sz; ++i)
         for (size_t j = 0; j < sz; ++j)
@@ -36,7 +37,20 @@ void conventional_multiply(int* c, size_t sz, int* a, int* b) {
                 *me(c, sz, i, j) += *me(a, sz, i, k) * *me(b, sz, k, j);
 }
 
-int main(int argc, char* argv[]) {
+void strassen(int* c, size_t n, int* a, int*b)
+{
+    if(n <= CUT)
+        conventional_multiply(c, n, a, b);
+    else
+    {
+        // break a, b, c up using index calculations
+        int a11 = a
+        return;
+    }
+}
+
+int main(int argc, char* argv[]) 
+{
     int d;
     // size_t sz = 1000;
     FILE *in;
@@ -105,13 +119,13 @@ int main(int argc, char* argv[]) {
                 printf("%d\n", *me(b, (size_t)d, (size_t)i, (size_t)j));
 */
         // compute `c = a x b`
-        conventional_multiply(c, (size_t)d, a, b);  // this is how to call..
+        strassen(c, (size_t)d, a, b);  // this is how to call..
 
         // print result matrix
-/*        for(i = 0; i < d; i++)
+        for(i = 0; i < d; i++)
             for(j = 0; j < d; j++)
                 printf("%d\n", *me(c, (size_t)d, (size_t)i, (size_t)j));
-*/        
+        
         free(a);
         free(b);
         free(c);
