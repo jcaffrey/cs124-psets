@@ -66,7 +66,7 @@ Step 4:                                  4.2.6
 
 C_11 = P_5 + P_4 - P_2 + P_6  ( = A_11*B_11 +
   A_11*B_22 + A_22*B_11 + A_22*B_22 +
-  + A_22*B_21 - A_22*B_11 
+  + A_22*B_21 - A_22*B_11
   - A_11*B_22 - A_12*B_22       + A_12*B_21 +
   A_12*B_22 + A_22*B_21 + A_22*B_22
   = A_11*B_11 + A_12*B_21 as desired )
@@ -89,3 +89,80 @@ C_22 = P_5 + P_1 - P_3 - P_7  ( = A_11*B_11 +
 Step 4 uses 8 matrix additions/subtractions,
 for Theta(n^2) time.  Exercise 4.2-2 asks for
 the pseudocode for Strassen's algorithm.
+
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~``
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~``
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~``
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~``
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~``
+
+
+n = A.rows
+let C be a new n x n matrix
+if n == 1
+    C11 = A11 * B11
+else partition A, B, and C as in equations (4.9) in chapter text
+    let S1, S2, ..., and S10 be 10 new n/2 x n/2 matrices
+    let P1, P2, ..., and P7 be 7 new n/2 x n/2 matrices
+    /* calculate the sum matrices */
+    S1  = B12 - B22
+    S2  = A11 + A12
+    S3  = A21 + A22
+    S4  = B21 - B11
+    S5  = A11 + A22
+    S6  = B11 + B22
+    S7  = A12 - A22
+    S8  = B21 + B22
+    S9  = A11 - A21
+    S10 = B11 + B12
+    /* calculate the product matrices */
+    P1  = SQUARE-MATRIX-MULTIPLY-STRASSEN(A11, S1)
+    P2  = SQUARE-MATRIX-MULTIPLY-STRASSEN(S2, B22)
+    P3  = SQUARE-MATRIX-MULTIPLY-STRASSEN(S3, B11)
+    P4  = SQUARE-MATRIX-MULTIPLY-STRASSEN(A22, S4)
+    P5  = SQUARE-MATRIX-MULTIPLY-STRASSEN(S5, S6)
+    P6  = SQUARE-MATRIX-MULTIPLY-STRASSEN(S7, S8)
+    P7  = SQUARE-MATRIX-MULTIPLY-STRASSEN(S9, S10)
+    /* calculate the final product sub matrices */
+    C11 = P4 + P5 + P6 - P2
+    C12 = P1 + P2
+    C21 = P3 + P4
+    C22 = P1 + P5 - P3 - P7
+return C
+
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~``
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~``
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~``
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~``
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~``
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~``
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~``
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~``
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~``
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~``
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~``
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~``
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~``
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~``
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~``
+
+// http://www.cs.mcgill.ca/~pnguyen/251F09/matrix-mult.pdf
+Strassen(A, B)
+1. Ifn=1 OutputA×B
+2. Else
+3. Compute A11, B11, . . . , A22, B22
+4. P1 ← Strassen(A11, B12 − B22)
+5. P2 ← Strassen(A11 + A12, B22)
+6. P3 ← Strassen(A21 + A22, B11)
+7. P4 ← Strassen(A22, B21 − B11)
+8. P5 ← Strassen(A11 + A22, B11 + B22)
+9. P6 ← Strassen(A12 − A22, B21 + B22)
+10. P7 ← Strassen(A11 − A21, B11 + B12)
+11. C11←P5+P4−P2+P6
+12. C12←P1+P2
+13. C21←P3+P4
+14. C22←P1+P5−P3−P7
+15. Output C
+16. End If
