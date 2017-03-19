@@ -50,7 +50,9 @@ matrix* setIndices(matrix* m, int rs, int re, int cs, int ce)
     nm->r_end = re;
     nm->c_start = cs;
     nm->c_end = ce;
-    nm->elements = (int *) malloc(re - rs * re - rs * sizeof(int));
+    // printf("ce - cs : %d\n",ce-cs );
+    // printf("re - rs : %d\n",re-rs );
+    nm->elements = (int *) malloc((re - rs)* (ce - cs)  * sizeof(int)); // needs to be multiplied by 4 for the lower matrices
 
     //nm->elements = m->elements;  // don't want to malloc here
     for(int i = rs; i < re; i++)
@@ -68,10 +70,14 @@ void strassen(matrix* c, int n, matrix* a, matrix*b)
     else
     {
         // break a, b, c up using index calculations
-        matrix* a11 = setIndices(a, 0, n/2, 0, n/2);
-        for(int i = a11->r_start; i < a11->r_end; i++)
-            for(int j = a11->c_start; j < a11->c_end; j++)
-                printf("%d\n", ELEMENT(a11, i, j));
+        //matrix* a11 = setIndices(a, 0, n/2, 0, n/2);
+        matrix* a12 = setIndices(a, 0, n/2, n/2, n);
+        //matrix* a21 = setIndices(a, n/2, n, 0, n/2);
+        //matrix* a22 = setIndices(a, n/2, n, n/2, n);
+
+        for(int i = a12->r_start; i < a12->r_end; i++)
+            for(int j = a12->c_start; j < a12->c_end; j++)
+                printf("%d\n", ELEMENT(a12, i, j));
         //int a11 = a
         return;
     }
