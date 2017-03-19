@@ -9,7 +9,7 @@
 #include <time.h>
 #include <sys/time.h>
 
-#define CUT 32
+#define CUT 1
 
 typedef struct {
     int r_start;
@@ -24,7 +24,8 @@ typedef struct {
 }*/
 //#define ELEMENT(m, r, c) m->elements[(c) * m->r_end + (r)]
 
-#define ELEMENT(m, i, j) m->elements[(m->r_end - m->r_start) * i + j]
+#define ELEMENT(m, i, j) m->elements[i + (m->r_end - m->r_start) * j]
+//#define ELEMENT(m, i, j) m->elements[(m->r_end - m->r_start) * i + j]
 
 void conventional_multiply(matrix* c, int sz, matrix* a, matrix* b)
 {
@@ -41,17 +42,46 @@ void conventional_multiply(matrix* c, int sz, matrix* a, matrix* b)
                 ELEMENT(c, i, j) += ELEMENT(a, i, k) * ELEMENT(b, k, j);
 }
 
+matrix* setIndices(matrix* m, int rs, int re, int cs, int ce)
+{
+/*    int d; 
+    d = 0;
+    if((re - rs) != (ce - cs)) {
+        printf("Warning: instatiate square matrices only!\n");
+        return NULL;
+    }
+    else
+    {
+        d = re - rs;
+    }
+*/
+    matrix * nm = (matrix *) malloc(sizeof(matrix));
+    nm->r_start = rs;
+    nm->r_end = re;
+    nm->c_start = cs;
+    nm->c_end = ce;
+    nm->elements = m->elements;  // don't want to malloc here
+    return nm;
+
+}
+
+
 void strassen(matrix* c, int n, matrix* a, matrix*b)
 {
-    if(n <= CUT)
+    if(n <= CUT) 
         conventional_multiply(c, n, a, b);
     else
     {
         // break a, b, c up using index calculations
+        matrix* a11 = setIndices(a, 0, n/2, 0, n/2);
+        for(int i = a11->r_start; i < a11->r_end; i++)
+            for(int j = a11->c_start; j < a11->c_end; j++)
+                printf("%d\n", ELEMENT(a, i, j));
         //int a11 = a
         return;
     }
 }
+
 
 
 matrix * newMatrix(int rs, int re, int cs, int ce) {
@@ -115,11 +145,16 @@ int main(int argc, char* argv[])
         while(fscanf(in, "%d", &val) != EOF)
         {
             if(i==j)
-                printf("%d\n", val);
+                printf("%d\n", val); // print diagonal entries
             if(tot < d * d)
+            {
+                //printf("adding %d at i : %d and j: %d\n", val, i , j);
                 ELEMENT(a, i, j) = val;
+            }
             if(tot >= d * d && tot < 2 * d *d)
+            {
                 ELEMENT(b, i, j) = val;
+            }
             tot++;
             j++;
             if(j == d)
@@ -131,13 +166,13 @@ int main(int argc, char* argv[])
                 i = 0;
         }
         strassen(c, d, a, b);
-        for(i = 0; i < d; i++)
+/*        for(i = 0; i < d; i++)
         {
             for(j = 0; j < d; j++)
             {
-                printf("%d\n", ELEMENT(c, i, j));
+                printf("%d\n", ELEMENT(a, i, j));
             }
-        }
+        }*/
     }
 
 }
