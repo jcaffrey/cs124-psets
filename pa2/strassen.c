@@ -27,6 +27,38 @@ typedef struct {
 #define ELEMENT(m, i, j) m->elements[i + (m->r_end - m->r_start) * j]
 //#define ELEMENT(m, i, j) m->elements[(m->r_end - m->r_start) * i + j]
 
+
+matrix * newMatrix(int rs, int re, int cs, int ce) {
+    int d;
+    d = 0;
+    if((re - rs) != (ce - cs)) {
+        printf("Warning: instatiate square matrices only!\n");
+        return NULL;
+    }
+    else
+    {
+        d = re - rs;
+    }
+
+    matrix * nm = (matrix *) malloc(sizeof(matrix));
+
+    // define indices
+    nm->r_start = rs;
+    nm->r_end = re;
+    nm->c_start = cs;
+    nm->c_end = ce;
+
+    // allocate a double array of length rows * cols
+    nm->elements = (int *) malloc(d * d * sizeof(int));
+    // set all data to 0
+    int i;
+    for (i = 0; i < d * d; i++)
+        nm->elements[i] = 0.0;
+
+    return nm;
+}
+
+
 void conventional_multiply(matrix* c, int sz, matrix* a, matrix* b)
 {
     // clear `c`
@@ -63,6 +95,23 @@ matrix* setIndices(matrix* m, int rs, int re, int cs, int ce)
 }
 
 
+void addition(matrix* s, matrix* a, matrix* b)
+{
+    int a_i;
+    int a_j;
+    int b_i;
+    int b_j;
+    int i;
+    int j;
+    for(i = 0, a_i = a->r_start, b_i = b->r_start; i < s->r_end; i++, a_i++, b_i++)
+        for(j = 0, a_j = a->c_start, b_j = b->c_start; j < s->c_end; j++, a_j++, b_j++)
+            printf("%d\n",  ELEMENT(b, b_i, b_j) + ELEMENT(a, a_i, a_j));
+            //ELEMENT(s, i, j) += ELEMENT(a, a_i, a_j) + ELEMENT(b, b_i, b_j);
+            //printf("%d %d %d\n", i, a_i, b_i);
+
+    return;
+}
+
 void strassen(matrix* c, int n, matrix* a, matrix*b)
 {
     if(n <= CUT)
@@ -70,50 +119,49 @@ void strassen(matrix* c, int n, matrix* a, matrix*b)
     else
     {
         // break a, b, c up using index calculations
-        //matrix* a11 = setIndices(a, 0, n/2, 0, n/2);
+        matrix* a11 = setIndices(a, 0, n/2, 0, n/2);
         matrix* a12 = setIndices(a, 0, n/2, n/2, n);
-        //matrix* a21 = setIndices(a, n/2, n, 0, n/2);
-        //matrix* a22 = setIndices(a, n/2, n, n/2, n);
+        // matrix* a21 = setIndices(a, n/2, n, 0, n/2);
+        // matrix* a22 = setIndices(a, n/2, n, n/2, n);
 
-        for(int i = a12->r_start; i < a12->r_end; i++)
-            for(int j = a12->c_start; j < a12->c_end; j++)
-                printf("%d\n", ELEMENT(a12, i, j));
+        // matrix* b11 = setIndices(a, 0, n/2, 0, n/2);
+        // matrix* b12 = setIndices(a, 0, n/2, n/2, n);
+        // matrix* b21 = setIndices(a, n/2, n, 0, n/2);
+        // matrix* b22 = setIndices(a, n/2, n, n/2, n);
+
+        // for(int i = a11->r_start; i < a11->r_end; i++)
+        //     for(int j = a11->c_start; j < a11->c_end; j++)
+        //         printf("%d\n", ELEMENT(a11, i, j));
+        //
+        // for(int i = a12->r_start; i < a12->r_end; i++)
+        //     for(int j = a12->c_start; j < a12->c_end; j++)
+        //         printf("%d\n", ELEMENT(a12, i, j));
+
+        // Step 2:
+        //
+        // S_1  = B_12 - B_22
+        // S_2  = A_11 + A_12
+        // S_3  = A_21 + A_22
+        // S_4  = B_21 - B_11
+        // S_5  = A_21 + A_22
+        // S_6  = B_11 + B_22
+        // S_7  = A_12 - A_22
+        // S_8  = B_21 + B_22
+        // S_9  = A_11 - A_21
+        // S_10 = B_11 + B_12
+
+        matrix* s2 = newMatrix(0, n/2, 0, n/2);
+        addition(s2, a11, a12);
+
+        // for(int i = s2->r_start; i < s2->r_end; i++)
+        //     for(int j = s2->c_start; j < s2->c_end; j++)
+        //         printf("%d\n", ELEMENT(s2, i, j));
         //int a11 = a
         return;
     }
 }
 
 
-
-matrix * newMatrix(int rs, int re, int cs, int ce) {
-    int d;
-    d = 0;
-    if((re - rs) != (ce - cs)) {
-        printf("Warning: instatiate square matrices only!\n");
-        return NULL;
-    }
-    else
-    {
-        d = re - rs;
-    }
-
-    matrix * nm = (matrix *) malloc(sizeof(matrix));
-
-    // define indices
-    nm->r_start = rs;
-    nm->r_end = re;
-    nm->c_start = cs;
-    nm->c_end = ce;
-
-    // allocate a double array of length rows * cols
-    nm->elements = (int *) malloc(d * d * sizeof(int));
-    // set all data to 0
-    int i;
-    for (i = 0; i < d * d; i++)
-        nm->elements[i] = 0.0;
-
-    return nm;
-}
 
 int main(int argc, char* argv[])
 {
