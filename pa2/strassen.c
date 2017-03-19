@@ -44,23 +44,18 @@ void conventional_multiply(matrix* c, int sz, matrix* a, matrix* b)
 
 matrix* setIndices(matrix* m, int rs, int re, int cs, int ce)
 {
-/*    int d; 
-    d = 0;
-    if((re - rs) != (ce - cs)) {
-        printf("Warning: instatiate square matrices only!\n");
-        return NULL;
-    }
-    else
-    {
-        d = re - rs;
-    }
-*/
+
     matrix * nm = (matrix *) malloc(sizeof(matrix));
     nm->r_start = rs;
     nm->r_end = re;
     nm->c_start = cs;
     nm->c_end = ce;
-    nm->elements = m->elements;  // don't want to malloc here
+    nm->elements = (int *) malloc(re - rs * re - rs * sizeof(int));
+
+    //nm->elements = m->elements;  // don't want to malloc here
+    for(int i = rs; i < re; i++)
+        for(int j = cs; j < ce; j++)
+            ELEMENT(nm, i, j) = ELEMENT(m, i, j);
     return nm;
 
 }
@@ -68,7 +63,7 @@ matrix* setIndices(matrix* m, int rs, int re, int cs, int ce)
 
 void strassen(matrix* c, int n, matrix* a, matrix*b)
 {
-    if(n <= CUT) 
+    if(n <= CUT)
         conventional_multiply(c, n, a, b);
     else
     {
@@ -76,7 +71,7 @@ void strassen(matrix* c, int n, matrix* a, matrix*b)
         matrix* a11 = setIndices(a, 0, n/2, 0, n/2);
         for(int i = a11->r_start; i < a11->r_end; i++)
             for(int j = a11->c_start; j < a11->c_end; j++)
-                printf("%d\n", ELEMENT(a, i, j));
+                printf("%d\n", ELEMENT(a11, i, j));
         //int a11 = a
         return;
     }
@@ -117,7 +112,7 @@ matrix * newMatrix(int rs, int re, int cs, int ce) {
 int main(int argc, char* argv[])
 {
     int d;
-    FILE* in; 
+    FILE* in;
     if(argc != 4) {
         printf("Proper usage: ./strassen [optional] [dimension] [inputfile]\n");
         return 1;
@@ -134,7 +129,7 @@ int main(int argc, char* argv[])
         if(in == NULL)
         {
             printf("Error reading file\n");
-            return 1; 
+            return 1;
         }
 
         int i = 0;
@@ -144,8 +139,8 @@ int main(int argc, char* argv[])
 
         while(fscanf(in, "%d", &val) != EOF)
         {
-            if(i==j)
-                printf("%d\n", val); // print diagonal entries
+            // if(i==j)
+            //     printf("%d\n", val); // print diagonal entries
             if(tot < d * d)
             {
                 //printf("adding %d at i : %d and j: %d\n", val, i , j);
