@@ -1,3 +1,55 @@
+P1 = a11*(b12 - b22)
+P2 = (a11 + a12)*b22
+P3 = (a21 + a22)*b11
+P4 = a22*(b21 - b11)
+P5 = (a11 + a22) * (b11 + b22)
+P6 = (a12 - a22) * (b21 + b22)
+P7 = (a11 - a21) * (b11 + b12)
+
+c11 = P5+P4 -P2 + P6
+c12 = P1 + P2
+c21 = P3 + P4
+c22 = P5 + p1 - P3 - P7
+
+
+Strassen(A, B)
+1. Ifn=1 OutputA×B
+2. Else
+3. Compute A11, B11, . . . , A22, B22
+4. P1 ← Strassen(A11, B12 − B22)
+5. P2 ← Strassen(A11 + A12, B22)
+6. P3 ← Strassen(A21 + A22, B11)
+7. P4 ← Strassen(A22, B21 − B11)
+8. P5 ← Strassen(A11 + A22, B11 + B22)
+9. P6 ← Strassen(A12 − A22, B21 + B22)
+10. P7 ← Strassen(A11 − A21, B11 + B12)
+11. C11←P5+P4−P2+P6
+12. C12←P1+P2
+13. C21←P3+P4
+14. C22←P1+P5−P3−P7
+15. Output C
+16. End If
+
+
+
+
+
+4. P1 ← Strassen(A11, B12 − B22)
+5. P2 ← Strassen(A11 + A12, B22)
+6. P3 ← Strassen(A21 + A22, B11)
+7. P4 ← Strassen(A22, B21 − B11)
+8. P5 ← Strassen(A11 + A22, B11 + B22)
+9. P6 ← Strassen(A12 − A22, B21 + B22)
+10. P7 ← Strassen(A11 − A21, B11 + B12)
+
+
+
+
+
+
+
+
+
 Strassen's method                        4.2.4
 
  The efficiency of Strassen's method is due to

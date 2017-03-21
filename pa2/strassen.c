@@ -108,7 +108,6 @@ void addition(matrix* s, matrix* a, matrix* b)
     // printf("s->rstart: %d a->rstart: %d, b->rstart: %d \n", s->r_start,a->r_start,b->r_start);
     // printf("s->rend: %d a->rend: %d, b->rend: %d \n", s->r_end,a->r_end,b->r_end);
     // printf("s->cend: %d a->cend: %d, b->cend: %d \n", s->c_end,a->c_end,b->c_end);
-    printf("\nPRINTING COPY\n");
 
     for(i = 0, a_i = a->r_start, b_i = b->r_start; i < s->r_end; i++, a_i++, b_i++)
     {
@@ -120,38 +119,54 @@ void addition(matrix* s, matrix* a, matrix* b)
     return;
 }
 
+void printMatrix(matrix* p)
+{
+    for(int i = p->r_start; i < p->r_end; i++)
+    {
+        for(int j = p->c_start; j < p->c_end; j++)
+        {
+            printf("%d\n", ELEMENT(p, i, j));
+        }
+    }
+}
+
 void strassen(matrix* c, int n, matrix* a, matrix*b)
 {
-
     if(n <= CUT)
-        conventional_multiply(c, n, a, b);
+        conventional_multiply(c, n, a, b);  // TODO: DO I NEED TO BE RETURNING C for the recursion to work?
     else
     {
         // break a, b, c up using index calculations
 
-        // printf("\nPRINTING ORIG\n");
-        // // for(int i = a11->r_start; i < a11->r_end; i++)
-        // //     for(int j = a11->c_start; j < a11->c_end; j++)
-        // //         printf("%d\n", ELEMENT(a11, i, j));
-        //
-        // for(int i = a12->r_start; i < a12->r_end; i++)
-        // {
-        //     for(int j = a12->c_start; j < a12->c_end; j++)
-        //     {
-        //         printf("bi: %d,   bj: %d \n", i, j);
-        //
-        //         printf("%d\n", ELEMENT(a12, i, j));
-        //     }
-        // }
         matrix* a11 = setIndices(a, 0, n/2, 0, n/2);
         matrix* a12 = setIndices(a, 0, n/2, n/2, n);
         matrix* a21 = setIndices(a, n/2, n, 0, n/2);
         matrix* a22 = setIndices(a, n/2, n, n/2, n);
 
-        matrix* b11 = setIndices(a, 0, n/2, 0, n/2);
-        matrix* b12 = setIndices(a, 0, n/2, n/2, n);
-        matrix* b21 = setIndices(a, n/2, n, 0, n/2);
-        matrix* b22 = setIndices(a, n/2, n, n/2, n);
+        // printf("printing a!!!!!!\n");
+        // printf("a11\n");
+        // printMatrix(a11);
+        // printf("a12\n");
+        // printMatrix(a12);
+        // printf("a21\n");
+        // printMatrix(a21);
+        // printf("a22\n");
+        // printMatrix(a22);
+
+        matrix* b11 = setIndices(b, 0, n/2, 0, n/2);
+        matrix* b12 = setIndices(b, 0, n/2, n/2, n);
+        matrix* b21 = setIndices(b, n/2, n, 0, n/2);
+        matrix* b22 = setIndices(b, n/2, n, n/2, n);
+
+        // printf("printing b!!!!!!\n");
+        // printf("b11\n");
+        // printMatrix(b11);
+        // printf("b12\n");
+        // printMatrix(b12);
+        // printf("b21\n");
+        // printMatrix(b21);
+        // printf("b22\n");
+        // printMatrix(b22);
 
         matrix* s1 = newMatrix(0, n/2, 0, n/2);
         matrix* s2 = newMatrix(0, n/2, 0, n/2);
@@ -175,6 +190,30 @@ void strassen(matrix* c, int n, matrix* a, matrix*b)
         subtraction(s9, a11, a21);
         addition(s10, b11, b12);
 
+        // printf("\nprinting!!!!!!\n");
+        // printf("s1 = b12 - b22\n");
+        // printMatrix(s1);
+        // printf("\ns2 = a11+a12\n");
+        // printMatrix(s2);
+        // printf("\ns3 = a21 + a22\n");
+        // printMatrix(s3);
+
+
+        //checking P1
+        // printf("P1 = a11 * S1\n");
+        // printf("\na11\n");
+        // printMatrix(a11);
+        // printf("\ns1\n");
+        // printMatrix(s1);
+
+        // checking P5
+        // printf("P5 = S5*S6\n");
+        // printf("\ns5\n");
+        // printMatrix(s5);
+        // printf("\ns6\n");
+        // printMatrix(s6);
+
+        //
 
         matrix* p1 = newMatrix(0, n/2, 0, n/2);
         matrix* p2 = newMatrix(0, n/2, 0, n/2);
@@ -192,12 +231,25 @@ void strassen(matrix* c, int n, matrix* a, matrix*b)
         strassen(p6, n/2, s7, s8);
         strassen(p7, n/2, s9, s10);
 
+        // debugging c22
+        // printf("\np1\n");
+        // printMatrix(p1);
+        // printf("\np5\n");
+        // printMatrix(p5);
+        // printf("\np3\n");
+        // printMatrix(p3);
+        printf("\np7\n");
+        printMatrix(p7);
+
 
         // calculate the parts of c
-        matrix* c11 = setIndices(c, 0, n/2, 0, n/2);
-        matrix* c12 = setIndices(c, 0, n/2, n/2, n);
-        matrix* c21 = setIndices(c, n/2, n, 0, n/2);
-        matrix* c22 = setIndices(c, n/2, n, n/2, n);
+        // matrix* c11 = setIndices(c, 0, n/2, 0, n/2);
+        // matrix* c12 = setIndices(c, 0, n/2, n/2, n);
+        // matrix* c21 = setIndices(c, n/2, n, 0, n/2);
+        matrix* c11 = newMatrix(0, n/2, 0, n/2);
+        matrix* c12 = newMatrix(0, n/2, 0, n/2);
+        matrix* c21 = newMatrix(0, n/2, 0, n/2);
+        matrix* c22 = newMatrix(0, n/2, 0, n/2);
 
 
         //C11←P5+P4−P2+P6
@@ -214,32 +266,31 @@ void strassen(matrix* c, int n, matrix* a, matrix*b)
         // C22←P1+P5−P3−P7
         matrix* tmp3 = newMatrix(0, n/2, 0, n/2);
         matrix* tmp4 = newMatrix(0, n/2, 0, n/2);
-        addition(tmp1, p1, p5);
-        subtraction(tmp2, tmp1, p3);
-        subtraction(c22, tmp2, p7);
+        addition(tmp3, p1, p5); // p1 and p5 are correct...
+        // printf("\ntmp3 = p1+p5\n");
+        // printMatrix(tmp3);
+
+        subtraction(tmp4, tmp3, p3);
+        printf("\ntmp4 = p1+p5-p3 = tmp3 -p3\n");
+        printMatrix(tmp4);
+
+
+        subtraction(c22, tmp4, p7);
+        printf("\nc22 = p1+p5-p3-p7 = tmp4-p7\n");
+        printMatrix(c22);
 
 
         printf("\nPRINTING c11\n");
-        for(int i = c11->r_start; i < c11->r_end; i++)
-            for(int j = c11->c_start; j < c11->c_end; j++)
-                printf("%d\n", ELEMENT(c11, i, j));
+        printMatrix(c11);
 
         printf("\nPRINTING c12\n");
-        for(int i = c12->r_start; i < c12->r_end; i++)
-            for(int j = c12->c_start; j < c12->c_end; j++)
-                printf("%d\n", ELEMENT(c12, i, j));
+        printMatrix(c12);
 
         printf("\nPRINTING c21\n");
-        for(int i = c21->r_start; i < c21->r_end; i++)
-            for(int j = c21->c_start; j < c21->c_end; j++)
-                printf("%d\n", ELEMENT(c21, i, j));
+        printMatrix(c21);
 
         printf("\nPRINTING c22\n");
-        for(int i = c22->r_start; i < c22->r_end; i++)
-            for(int j = c22->c_start; j < c22->c_end; j++)
-                printf("%d\n", ELEMENT(c22, i, j));
-        //int a11 = a
-
+        printMatrix(c22);
 
         // copy all parts back into c and return
         return;
