@@ -52,14 +52,26 @@ matrix * newMatrix(int rs, int re, int cs, int ce) {
 }
 
 
-void conventional_multiply(matrix* c, int sz, matrix* a, matrix* b)
+void conventional_multiply(matrix* c, int sz, matrix* a, matrix* b) // fix this to index into the right places!
 {
-    // compute product and update `c`
-        // want to read left to right for both
-    for (int i = 0; i < sz; ++i)
-        for (int k = 0; k < sz; ++k)
-            for (int j = 0; j < sz; ++j)
-                ELEMENT(c, i, j) += ELEMENT(a, i, k) * ELEMENT(b, k, j);
+    int i;
+    int k;
+    int j;
+    int a_k;
+    int b_k;
+    int c_i;
+    int a_i;
+    int c_j;
+    int b_j;
+    for (i = 0, c_i = c->r_start, a_i = a->r_start; i < sz; i++, c_i++, a_i++)
+        for (k = 0, a_k = a->c_start, b_k = b->r_start; k < sz; k++, a_k++, b_k++)
+            for (j = 0, c_j = c->c_start, b_j = b->c_start; j < sz; j++, c_j++, b_j++)
+                ELEMENT(c, c_i, c_j) += ELEMENT(a, a_i, a_k) * ELEMENT(b, b_k, b_j);
+
+    // for (int i = 0; i < sz; i++)
+    //     for (int k = 0; k < sz; k++)
+    //         for (int j = 0; j < sz; j++)
+    //             ELEMENT(c, i, j) += ELEMENT(a, i, k) * ELEMENT(b, k, j);
 }
 
 matrix* setIndices(matrix* m, int rs, int re, int cs, int ce)
@@ -198,6 +210,11 @@ void strassen(matrix* c, int n, matrix* a, matrix*b)
         // printf("\ns3 = a21 + a22\n");
         // printMatrix(s3);
 
+        // printf("try to fix error with s4\n");
+        // printf("b21\n");
+        // printMatrix(b21);
+        // printf("b11\n");
+        // printMatrix(b11);
 
         //checking P1
         // printf("P1 = a11 * S1\n");
@@ -205,6 +222,20 @@ void strassen(matrix* c, int n, matrix* a, matrix*b)
         // printMatrix(a11);
         // printf("\ns1\n");
         // printMatrix(s1);
+
+        //checking P3
+        // printf("P3 = b11 * S3\n");
+        // printf("\nb11\n");
+        // printMatrix(b11);
+        // printf("\ns3\n");
+        // printMatrix(s3);
+
+        printf("P4 = a22 * S4\n");
+        printf("\na22\n");
+        printMatrix(a22);
+        printf("\ns4\n");
+        printMatrix(s4);
+
 
         // checking P5
         // printf("P5 = S5*S6\n");
@@ -223,9 +254,13 @@ void strassen(matrix* c, int n, matrix* a, matrix*b)
         matrix* p6 = newMatrix(0, n/2, 0, n/2);
         matrix* p7 = newMatrix(0, n/2, 0, n/2);
 
+        // conventional_multiply(p3, n/2, b11, s3);
+        // printf("conventional p3.......\n");
+        // printMatrix(p3);
+
         strassen(p1, n/2, a11, s1);
-        strassen(p2, n/2, s2, b22);
-        strassen(p3, n/2, s3, b11);
+        strassen(p2, n/2, b22, s2);
+        strassen(p3, n/2, b11, s3);
         strassen(p4, n/2, a22, s4);
         strassen(p5, n/2, s5, s6);
         strassen(p6, n/2, s7, s8);
@@ -236,10 +271,12 @@ void strassen(matrix* c, int n, matrix* a, matrix*b)
         // printMatrix(p1);
         // printf("\np5\n");
         // printMatrix(p5);
-        // printf("\np3\n");
-        // printMatrix(p3);
-        printf("\np7\n");
-        printMatrix(p7);
+        printf("\np3\n");
+        printMatrix(p3);
+        // printf("\np7\n");
+        // printMatrix(p7);
+        printf("\np4\n");
+        printMatrix(p4);
 
 
         // calculate the parts of c
@@ -262,6 +299,8 @@ void strassen(matrix* c, int n, matrix* a, matrix*b)
         addition(c12, p1, p2);
 
         addition(c21, p3, p4);
+        printf("\nc21 = p3+p4\n");
+        printMatrix(c22);
 
         // C22←P1+P5−P3−P7
         matrix* tmp3 = newMatrix(0, n/2, 0, n/2);
@@ -271,8 +310,8 @@ void strassen(matrix* c, int n, matrix* a, matrix*b)
         // printMatrix(tmp3);
 
         subtraction(tmp4, tmp3, p3);
-        printf("\ntmp4 = p1+p5-p3 = tmp3 -p3\n");
-        printMatrix(tmp4);
+        // printf("\ntmp4 = p1+p5-p3 = tmp3 -p3\n");
+        // printMatrix(tmp4);
 
 
         subtraction(c22, tmp4, p7);
@@ -352,10 +391,10 @@ int main(int argc, char* argv[])
         //strassen(c, d, a, b);
         strassen(c, d, a, b);
 
-        printf("PRINTING C: \n");
-        for(i = 0; i < d; i++)
-            for(j = 0; j < d; j++)
-                printf("%d\n", ELEMENT(c, i, j));
+        // printf("PRINTING C: \n");
+        // for(i = 0; i < d; i++)
+        //     for(j = 0; j < d; j++)
+        //         printf("%d\n", ELEMENT(c, i, j));
     }
 
 }
