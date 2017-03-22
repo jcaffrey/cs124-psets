@@ -9,7 +9,7 @@
 #include <time.h>
 #include <sys/time.h>
 
-#define CUT 2
+#define CUT 2 // only works with base case of 2 right now..
 
 typedef struct {
     int r_start;
@@ -54,24 +54,12 @@ matrix * newMatrix(int rs, int re, int cs, int ce) {
 
 void conventional_multiply(matrix* c, int sz, matrix* a, matrix* b) // fix this to index into the right places!
 {
-    int i;
-    int k;
-    int j;
-    int a_k;
-    int b_k;
-    int c_i;
-    int a_i;
-    int c_j;
-    int b_j;
+    int i, k, j, a_k, b_k, c_i, a_i, c_j, b_j;
     for (i = 0, c_i = c->r_start, a_i = a->r_start; i < sz; i++, c_i++, a_i++)
         for (k = 0, a_k = a->c_start, b_k = b->r_start; k < sz; k++, a_k++, b_k++)
             for (j = 0, c_j = c->c_start, b_j = b->c_start; j < sz; j++, c_j++, b_j++)
                 ELEMENT(c, c_i, c_j) += ELEMENT(a, a_i, a_k) * ELEMENT(b, b_k, b_j);
 
-    // for (int i = 0; i < sz; i++)
-    //     for (int k = 0; k < sz; k++)
-    //         for (int j = 0; j < sz; j++)
-    //             ELEMENT(c, i, j) += ELEMENT(a, i, k) * ELEMENT(b, k, j);
 }
 
 matrix* setIndices(matrix* m, int rs, int re, int cs, int ce)
@@ -140,6 +128,15 @@ void printMatrix(matrix* p)
             printf("%d\n", ELEMENT(p, i, j));
         }
     }
+}
+
+void setMatrixElements(matrix* c, matrix* a)
+{
+    int a_i, a_j, c_i, c_j;
+    for(a_i = a->r_start, c_i = c->r_start; a_i < a->r_end; a_i++, c_i++)
+        for(a_j = a->c_start, c_j= c->c_start; a_j < a->c_end; a_j++, c_j++)
+            ELEMENT(c, c_i, c_j) = ELEMENT(a, a_i, a_j);
+    return;
 }
 
 void strassen(matrix* c, int n, matrix* a, matrix*b)
@@ -272,12 +269,12 @@ void strassen(matrix* c, int n, matrix* a, matrix*b)
         // printMatrix(p1);
         // printf("\np5\n");
         // printMatrix(p5);
-        printf("\np3\n");
-        printMatrix(p3);
+        // printf("\np3\n");
+        // printMatrix(p3);
         // printf("\np7\n");
         // printMatrix(p7);
-        printf("\np4\n");
-        printMatrix(p4);
+        // printf("\np4\n");
+        // printMatrix(p4);
 
 
         // calculate the parts of c
@@ -333,6 +330,9 @@ void strassen(matrix* c, int n, matrix* a, matrix*b)
         printMatrix(c22);
 
         // copy all parts back into c and return
+        setMatrixElements(c, c11);
+        //setMatrixElements(c,  c12);
+        setMatrixElements(c, c21);
         return;
     }
 }
@@ -392,10 +392,10 @@ int main(int argc, char* argv[])
         //strassen(c, d, a, b);
         strassen(c, d, a, b);
 
-        // printf("PRINTING C: \n");
-        // for(i = 0; i < d; i++)
-        //     for(j = 0; j < d; j++)
-        //         printf("%d\n", ELEMENT(c, i, j));
+        printf("PRINTING C: \n");
+        for(i = 0; i < d; i++)
+            for(j = 0; j < d; j++)
+                printf("%d\n", ELEMENT(c, i, j));
     }
 
 }
