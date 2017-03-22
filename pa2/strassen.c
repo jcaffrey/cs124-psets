@@ -246,6 +246,7 @@ void strassen(matrix* c, int n, matrix* a, matrix*b)
 
         //
 
+        //instatiate p matrices
         matrix* p1 = newMatrix(0, n/2, 0, n/2);
         matrix* p2 = newMatrix(0, n/2, 0, n/2);
         matrix* p3 = newMatrix(0, n/2, 0, n/2);
@@ -260,7 +261,7 @@ void strassen(matrix* c, int n, matrix* a, matrix*b)
 
         strassen(p1, n/2, a11, s1);
         strassen(p2, n/2, b22, s2);
-        strassen(p3, n/2, b11, s3);
+        strassen(p3, n/2, s3, b11);   // careful! order mattered here...
         strassen(p4, n/2, a22, s4);
         strassen(p5, n/2, s5, s6);
         strassen(p6, n/2, s7, s8);
@@ -298,9 +299,9 @@ void strassen(matrix* c, int n, matrix* a, matrix*b)
 
         addition(c12, p1, p2);
 
-        addition(c21, p3, p4);
+        addition(c21, p4, p3);
         printf("\nc21 = p3+p4\n");
-        printMatrix(c22);
+        printMatrix(c21);
 
         // C22←P1+P5−P3−P7
         matrix* tmp3 = newMatrix(0, n/2, 0, n/2);
@@ -315,8 +316,8 @@ void strassen(matrix* c, int n, matrix* a, matrix*b)
 
 
         subtraction(c22, tmp4, p7);
-        printf("\nc22 = p1+p5-p3-p7 = tmp4-p7\n");
-        printMatrix(c22);
+        // printf("\nc22 = p1+p5-p3-p7 = tmp4-p7\n");
+        // printMatrix(c22);
 
 
         printf("\nPRINTING c11\n");
