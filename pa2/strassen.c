@@ -9,7 +9,7 @@
 #include <time.h>
 #include <sys/time.h>
 
-#define CUT 2 // only works with base case of 2 right now..
+#define CUT 8 // only works with base case of 2 right now..
 
 typedef struct {
     int r_start;
@@ -298,6 +298,8 @@ void strassen(matrix* c, int n, matrix* a, matrix*b)
         addition(tmp1, p5, p4);
         subtraction(tmp2, tmp1, p2);
         addition(c11, tmp2, p6);
+        printf("c11\n");
+        printMatrix(c11);
 
         addition(c12, p1, p2);
 
@@ -401,7 +403,12 @@ int main(int argc, char* argv[])
             if(tot == d * d)
                 i = 0;
         }
-        //strassen(c, d, a, b);
+
+        /*printMatrix(a);
+        printf("PRINTING b: \n");
+
+        printMatrix(b);
+        *///strassen(c, d, a, b);
         strassen(c, d, a, b);
 
         printf("PRINTING C: \n");
