@@ -196,7 +196,7 @@ void strassen(matrix* c, int n, matrix* a, matrix*b, int cut)
         matrix* p7 = newMatrix(0, n/2, 0, n/2);
 
         strassen(p1, n/2, a11, s1, cut);
-        strassen(p2, n/2, b22, s2, cut);
+        strassen(p2, n/2, s2, b22, cut);
         strassen(p3, n/2, s3, b11, cut);   // careful! order mattered here...
         strassen(p4, n/2, a22, s4, cut);
         strassen(p5, n/2, s5, s6, cut);
