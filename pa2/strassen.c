@@ -9,13 +9,14 @@
 #include <time.h>
 #include <sys/time.h>
 
-#define CUT 8 // only works with base case of 2 right now..
+#define CUT 1 // only works with base case of 2 right now..
 
 typedef struct {
     int r_start;
     int r_end;
     int c_start;
     int c_end;
+    int isNew;
     int* elements;
 } matrix;
 
@@ -72,11 +73,15 @@ matrix* setIndices(matrix* m, int rs, int re, int cs, int ce)
     nm->c_end = ce;
     // printf("ce - cs : %d\n",ce-cs );
     // printf("re - rs : %d\n",re-rs );
-    nm->elements = (int *) malloc((re - rs) * (re - rs) *(re - rs) * (ce - cs)  * sizeof(int)); //size of this caused annoying error on addition step..s2..
+    nm->elements = (int *) malloc(sizeof(int)*(re - rs) * (ce - cs) * sizeof(int)); //size of this caused annoying error on addition step..s2..
 
     //nm->elements = m->elements;  // don't want to malloc here
-    for(int i = rs; i < re; i++)
-        for(int j = cs; j < ce; j++)
+/*    int m_i;
+    int m_j;*/
+    int i;
+    int j;
+    for(i = rs; i < re; i++)
+        for(j = cs; j < ce; j++)
             ELEMENT(nm, i, j) = ELEMENT(m, i, j);
     return nm;
 
@@ -105,9 +110,6 @@ void addition(matrix* s, matrix* a, matrix* b)
     int b_j;
     int i;
     int j;
-    // printf("s->rstart: %d a->rstart: %d, b->rstart: %d \n", s->r_start,a->r_start,b->r_start);
-    // printf("s->rend: %d a->rend: %d, b->rend: %d \n", s->r_end,a->r_end,b->r_end);
-    // printf("s->cend: %d a->cend: %d, b->cend: %d \n", s->c_end,a->c_end,b->c_end);
 
     for(i = 0, a_i = a->r_start, b_i = b->r_start; i < s->r_end; i++, a_i++, b_i++)
     {
@@ -144,10 +146,12 @@ void setMatrixElements(matrix* c, matrix* a, int r_start, int c_start)
     return;
 }
 
-void strassen(matrix* c, int n, matrix* a, matrix*b)
+void strassen(matrix* c, int n, matrix* a, matrix*b, int cut)
 {
-    if(n <= CUT)
+    if(n <= cut){
         conventional_multiply(c, n, a, b);  // TODO: DO I NEED TO BE RETURNING C for the recursion to work?
+        return;
+    }
     else
     {
         // break a, b, c up using index calculations
@@ -261,13 +265,13 @@ void strassen(matrix* c, int n, matrix* a, matrix*b)
         // printf("conventional p3.......\n");
         // printMatrix(p3);
 
-        strassen(p1, n/2, a11, s1);
-        strassen(p2, n/2, b22, s2);
-        strassen(p3, n/2, s3, b11);   // careful! order mattered here...
-        strassen(p4, n/2, a22, s4);
-        strassen(p5, n/2, s5, s6);
-        strassen(p6, n/2, s7, s8);
-        strassen(p7, n/2, s9, s10);
+        strassen(p1, n/2, a11, s1, cut);
+        strassen(p2, n/2, b22, s2, cut);
+        strassen(p3, n/2, s3, b11, cut);   // careful! order mattered here...
+        strassen(p4, n/2, a22, s4, cut);
+        strassen(p5, n/2, s5, s6, cut);
+        strassen(p6, n/2, s7, s8, cut);
+        strassen(p7, n/2, s9, s10, cut);
 
         // debugging c22
         // printf("\np1\n");
@@ -281,27 +285,68 @@ void strassen(matrix* c, int n, matrix* a, matrix*b)
         // printf("\np4\n");
         // printMatrix(p4);
 
-
-        // calculate the parts of c
-        // matrix* c11 = setIndices(c, 0, n/2, 0, n/2);
-        // matrix* c12 = setIndices(c, 0, n/2, n/2, n);
-        // matrix* c21 = setIndices(c, n/2, n, 0, n/2);
-        matrix* c11 = newMatrix(0, n/2, 0, n/2);
+/*        matrix* c11 = newMatrix(0, n/2, 0, n/2);  // is it bad to wipe these to 0 on recursion?
         matrix* c12 = newMatrix(0, n/2, 0, n/2);
         matrix* c21 = newMatrix(0, n/2, 0, n/2);
         matrix* c22 = newMatrix(0, n/2, 0, n/2);
+*/
+        matrix* c11; 
+        matrix* c12; 
+        matrix* c21; 
+        matrix* c22;
+        if(c->isNew == 1)
+        {
+            c11 = newMatrix(0, n/2, 0, n/2);  // is it bad to wipe these to 0 on recursion?
+            c12 = newMatrix(0, n/2, 0, n/2);
+            c21 = newMatrix(0, n/2, 0, n/2);
+            c22 = newMatrix(0, n/2, 0, n/2);
+        }
+        else
+        {
+            c11 = setIndices(c, 0, n/2, 0, n/2);
+            c12 = setIndices(c, 0, n/2, n/2, n);
+            c21 = setIndices(c, n/2, n, 0, n/2);
+            c22 = setIndices(c, n/2, n, n/2, n/2);
+/*
+            matrix* c11 = setIndices(c, 0, n/2, 0, n/2);
+            matrix* c12 = setIndices(c, 0, n/2, 0, n/2);
+            matrix* c21 = setIndices(c, 0, n/2, 0, n/2);
+            matrix* c22 = setIndices(c, 0, n/2, 0, n/2);        // calculate the parts of c*/
+        }
 
 
+/*        printf("\np5\n");
+        printMatrix(p5);
+        printf("\np4\n");
+        printMatrix(p4);
+*/
         //C11←P5+P4−P2+P6
         matrix* tmp1 = newMatrix(0, n/2, 0, n/2);
         matrix* tmp2 = newMatrix(0, n/2, 0, n/2);
         addition(tmp1, p5, p4);
+
+//        printf("\ntmp1\n");
+
+        printMatrix(tmp1);
         subtraction(tmp2, tmp1, p2);
         addition(c11, tmp2, p6);
-        printf("c11\n");
+/*        printf("c11 = p5+p4-p2+p6\n");
         printMatrix(c11);
-
+*/
+        printf("\np1\n");
+        printMatrix(p1);
+        printf("\np2\n");
+        printMatrix(p2);
+/*        
+        printf("p3\n");
+        printMatrix(p3);
+        printf("p4\n");
+        printMatrix(p4); //degubbing for c12, c21
+*/
         addition(c12, p1, p2);
+        printf("\nc12 = p1+p2\n");
+        //printf("c12->c_start: %d\n", c12->c_start);
+        printMatrix(c12);
 
         addition(c21, p4, p3);
 /*        printf("\nc21 = p3+p4\n");
@@ -356,6 +401,7 @@ void strassen(matrix* c, int n, matrix* a, matrix*b)
 int main(int argc, char* argv[])
 {
     int d;
+    int cut;
     FILE* in;
     if(argc != 4) {
         printf("Proper usage: ./strassen [optional] [dimension] [inputfile]\n");
@@ -365,10 +411,12 @@ int main(int argc, char* argv[])
     {
         in = fopen(argv[3], "r");
         d = atoi(argv[2]);
+        cut = atoi(argv[1]);
 
         matrix* a = newMatrix(0, d, 0, d);
         matrix* b = newMatrix(0, d, 0, d);
         matrix* c = newMatrix(0, d, 0, d);
+        c->isNew = 1;
 
         if(in == NULL)
         {
@@ -409,7 +457,7 @@ int main(int argc, char* argv[])
 
         printMatrix(b);
         *///strassen(c, d, a, b);
-        strassen(c, d, a, b);
+        strassen(c, d, a, b, cut);
 
         printf("PRINTING C: \n");
         printMatrix(c);
