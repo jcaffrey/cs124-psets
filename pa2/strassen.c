@@ -95,21 +95,21 @@ void strassen(int* c, int* a, int*b, int cut, int n, int big_n)
         // TODO
         // GO BACK TO NAIVE WAY OF SETTING INDICES...
         // TRY TO DO IT WITHOUT
-        int* a11 = a;
-        int* a12 = a + (n / 2);
-        int* a21 = a + ((n * n) / (2));
-        int* a22 = a + ((n * n) / (2)) + (n / 2);
+        int* A = a;
+        int* B = a + (n / 2);
+        int* C = a + ((n * n) / (2));
+        int* D = a + ((n * n) / (2)) + (n / 2);
 
-        int* b11 = b;
-        int* b12 = b + (n / 2);
-        int* b21 = b + ((n * n) / (2));
-        int* b22 = b + ((n * n) / (2))+ (n / 2);
+        int* E = b;
+        int* F = b + (n / 2);
+        int* G = b + ((n * n) / (2));
+        int* H = b + ((n * n) / (2))+ (n / 2);
 
-        printf("\nb22 regular...\n");
-        printMatrix(b22, n/2);
-
-        printf("\nb22 half size print...\n");
-        printHalfSizeMatrix(b22, n/2, big_n);
+        // printf("\nb22 regular...\n");
+        // printMatrix(H, n/2);
+        //
+        // printf("\nb22 half size print...\n");
+        // printHalfSizeMatrix(H, n/2, big_n);
 
         int* s1 = newMatrix(n/2);
         int* s2 = newMatrix(n/2);
@@ -122,16 +122,16 @@ void strassen(int* c, int* a, int*b, int cut, int n, int big_n)
         int* s9 = newMatrix(n/2);
         int* s10 = newMatrix(n/2);
 
-        subtraction(s1, b12, b22, n/2, n/4); // b11, b22 need to know that the elements array is actually n long
-        addition(s2, a11, a12, n/2, n/4);
-        addition(s3, a21, a22, n/2, n/4);
-        subtraction(s4, b21, b11, n/2, big_n);
-        addition(s5, a11, a22, n/2, big_n);
-        addition(s6, b11, b22, n/2, big_n);
-        subtraction(s7, a12, a22, n/2, big_n);
-        addition(s8, b21, b22, n/2, big_n);
-        subtraction(s9, a11, a21, n/2, big_n);
-        addition(s10, b11, b12, n/2, big_n);
+        subtraction(s1, F, H, n/2, n/4); // b11, b22 need to know that the elements array is actually n long
+        addition(s2, A, B, n/2, n/4);
+        addition(s3, C, D, n/2, n/4);
+        subtraction(s4, G, E, n/2, big_n);
+        addition(s5, A, D, n/2, big_n);
+        addition(s6, E, H, n/2, big_n);
+        subtraction(s7, B, D, n/2, big_n);
+        addition(s8, G, H, n/2, big_n);
+        subtraction(s9, A, C, n/2, big_n);
+        addition(s10, E, F, n/2, big_n);
 /*
         printf("\n b12 - b22 = s1\n");//  THIS WORKS WHEN BIG_N IS IN SUBTRACT AND ADDITION
 
@@ -152,10 +152,10 @@ void strassen(int* c, int* a, int*b, int cut, int n, int big_n)
         int* p6 = newMatrix(n/2);
         int* p7 = newMatrix(n/2);
 
-        strassen(p1, a11, s1, cut, n/2, big_n);
-        strassen(p2, s2, b22, cut, n/2, big_n);
-        strassen(p3, s3, b11, cut, n/2, big_n);   // careful! order mattered here...
-        strassen(p4, a22, s4, cut, n/2, big_n);
+        strassen(p1, A, s1, cut, n/2, big_n);
+        strassen(p2, s2, H, cut, n/2, big_n);
+        strassen(p3, s3, E, cut, n/2, big_n);   // careful! order mattered here...
+        strassen(p4, D, s4, cut, n/2, big_n);
         strassen(p5, s5, s6, cut, n/2, big_n);
         strassen(p6, s7, s8, cut, n/2, big_n);
         strassen(p7, s9, s10, cut, n/2, big_n);
@@ -166,10 +166,10 @@ void strassen(int* c, int* a, int*b, int cut, int n, int big_n)
         int* c21 = c + ((n * n) / (2));
         int* c22 = c + ((n * n) / (2))+ (n / 2);
 */
-        int* c11 = newMatrix(n/2);
-        int* c12 = newMatrix(n/2);
-        int* c21 = newMatrix(n/2);
-        int* c22 = newMatrix(n/2);
+        int* c1 = newMatrix(n/2);
+        int* c2 = newMatrix(n/2);
+        int* c3 = newMatrix(n/2);
+        int* c4 = newMatrix(n/2);
         //C11<--P5+P4−P2+P6
         int* tmp1 = newMatrix(n/2);
         int* tmp2 = newMatrix(n/2);
@@ -201,23 +201,23 @@ void strassen(int* c, int* a, int*b, int cut, int n, int big_n)
         subtraction(tmp2, tmp1, p2, n/2, big_n);
 
 
-        addition(c11, tmp2, p6, n/2, big_n);
+        addition(c1, tmp2, p6, n/2, big_n);
 
         printf("\n ------c11------\n");
-        printHalfSizeMatrix(c11, n/2, big_n);
+        printHalfSizeMatrix(c1, n/2, big_n);
 
         // C12<--P1+P2
-        addition(c12, p1, p2, n/2, big_n);
+        addition(c2, p1, p2, n/2, big_n);
 
         // C21<--P4+P3
-        addition(c21, p4, p3, n/2, big_n);
+        addition(c3, p4, p3, n/2, big_n);
 
         // C22<--P1+P5−P3−P7
         int* tmp3 = newMatrix(n/2);
         int* tmp4 = newMatrix(n/2);
         addition(tmp3, p1, p5, n/2, big_n);
         subtraction(tmp4, tmp3, p3, n/2, big_n);
-        subtraction(c22, tmp4, p7, n/2, big_n);
+        subtraction(c4, tmp4, p7, n/2, big_n);
 
 /*        printMatrix(c11, n/2);
         printMatrix(c12, n/2);
