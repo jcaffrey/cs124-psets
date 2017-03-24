@@ -21,7 +21,7 @@ int* newMatrix(int sz) {
 }
 
 
-void conventional_multiply(int* c, int* a, int* b, int sz, int big_n) // fix this to index into the right places!
+void conventional_multiply(int* c, int* a, int* b, int sz) // fix this to index into the right places!
 {
     int i, k, j;
     for(i = 0; i < sz; i++)
@@ -37,7 +37,7 @@ void subtraction(int* s, int* a, int* b, int sz, int big_n)
     int j;
     for(i = 0; i < sz; i++)
         for(j = 0; j < sz; j++)
-            ELEMENT(s, i, j, sz) = ELEMENT(a, i, j, big_n) - ELEMENT(b, i, j, big_n); //         
+            ELEMENT(s, i, j, sz) = ELEMENT(a, i, j, big_n) - ELEMENT(b, i, j, big_n); //
     return;
 }
 
@@ -50,7 +50,7 @@ void addition(int* s, int* a, int* b, int sz, int big_n)
     {
         for(j = 0; j < sz; j++)
         {
-            ELEMENT(s, i, j, sz) = ELEMENT(a, i, j, big_n) + ELEMENT(b, i, j, big_n); // need to multiply sz of b, a by twice times the number of times strassens was claled?          
+            ELEMENT(s, i, j, sz) = ELEMENT(a, i, j, big_n) + ELEMENT(b, i, j, big_n); // need to multiply sz of b, a by twice times the number of times strassens was claled?
         }
     }
     return;
@@ -86,7 +86,7 @@ void printHalfSizeMatrix(int* matrix, int sz, int big_n)
 void strassen(int* c, int* a, int*b, int cut, int n, int big_n)
 {
     if(n <= cut){
-        conventional_multiply(c, a, b, n, big_n);  // TODO: DO I NEED TO BE RETURNING C for the recursion to work?
+        conventional_multiply(c, a, b, n);  // TODO: DO I NEED TO BE RETURNING C for the recursion to work?
         return;
     }
     else
@@ -94,7 +94,7 @@ void strassen(int* c, int* a, int*b, int cut, int n, int big_n)
         // break a, b, c up using index calculations
         // TODO
         // GO BACK TO NAIVE WAY OF SETTING INDICES...
-        // TRY TO DO IT WITHOUT 
+        // TRY TO DO IT WITHOUT
         int* a11 = a;
         int* a12 = a + (n / 2);
         int* a21 = a + ((n * n) / (2));
@@ -105,7 +105,11 @@ void strassen(int* c, int* a, int*b, int cut, int n, int big_n)
         int* b21 = b + ((n * n) / (2));
         int* b22 = b + ((n * n) / (2))+ (n / 2);
 
-       // printHalfSizeMatrix(a11, n/2, big_n);
+        printf("\nb22 regular...\n");
+        printMatrix(b22, n/2);
+
+        printf("\nb22 half size print...\n");
+        printHalfSizeMatrix(b22, n/2, big_n);
 
         int* s1 = newMatrix(n/2);
         int* s2 = newMatrix(n/2);
@@ -118,9 +122,9 @@ void strassen(int* c, int* a, int*b, int cut, int n, int big_n)
         int* s9 = newMatrix(n/2);
         int* s10 = newMatrix(n/2);
 
-        subtraction(s1, b12, b22, n/2, big_n); // b11, b22 need to know that the elements array is actually n long
-        addition(s2, a11, a12, n/2, big_n);
-        addition(s3, a21, a22, n/2, big_n);
+        subtraction(s1, b12, b22, n/2, n/4); // b11, b22 need to know that the elements array is actually n long
+        addition(s2, a11, a12, n/2, n/4);
+        addition(s3, a21, a22, n/2, n/4);
         subtraction(s4, b21, b11, n/2, big_n);
         addition(s5, a11, a22, n/2, big_n);
         addition(s6, b11, b22, n/2, big_n);
@@ -136,7 +140,7 @@ void strassen(int* c, int* a, int*b, int cut, int n, int big_n)
         printf("\n b22 \n");
         printHalfSizeMatrix(b22, n/2, big_n);
 
-        printf("\n s1 \n");        
+        printf("\n s1 \n");
         printMatrix(s1, n/2);
 */
         //instatiate p matrices
@@ -170,23 +174,31 @@ void strassen(int* c, int* a, int*b, int cut, int n, int big_n)
         int* tmp1 = newMatrix(n/2);
         int* tmp2 = newMatrix(n/2);
         addition(tmp1, p5, p4, n/2, big_n);
-        printf("\n p5\n");
-        printMatrix(p5, n/2);
-        printf("\n p4\n");
-        printMatrix(p4, n/2);
-        printf("\n p2\n");
+
+
+        printf("\np1\n");
+        printMatrix(p1, n/2);
+        //printHalfSizeMatrix(p1, n/2, big_n);
+        printf("\np2\n");
         printMatrix(p2, n/2);
-        printf("\n p6\n");
+
+        printf("\np3\n");
+        printMatrix(p3, n/2);
+
+        printf("\np4\n");
+        printMatrix(p4, n/2);
+
+        printf("\np5\n");
+        printMatrix(p5, n/2);
+
+        printf("\np6\n");
         printMatrix(p6, n/2);
 
-
-        printf("\n tmp1\n");
-        printMatrix(tmp1, n/2);
+        printf("\np7\n");
+        printMatrix(p7, n/2);
 
 
         subtraction(tmp2, tmp1, p2, n/2, big_n);
-        printf("\n tmp2\n");
-        printMatrix(tmp2, n/2);
 
 
         addition(c11, tmp2, p6, n/2, big_n);
