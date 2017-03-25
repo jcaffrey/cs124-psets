@@ -3,7 +3,7 @@
 
 // TODO: fix the fact tht it hangs when inputting dimension at command line that is higher than the dimension of the input file
 // TODO: free things and don't be a bad coder. -- free everything that is malloc'd
-
+int isOdd = 0;
 
 int** newMatrix(int sz) {
     // allocate a flat array of elements
@@ -20,14 +20,48 @@ int** newMatrix(int sz) {
     return nm;
 }
 
+// assumes size of the paddedMatrix
+int** paddedMatrix(int** orig, int sz)
+{
+    int i, j;
+    int** pm = newMatrix(sz);
 
+    for(i = 0; i < sz; i++)
+    {
+        for(j = 0; j < sz; j++)
+        {
+            if(i == sz - 1 || j == sz - 1)
+            {
+                //printf("padding matrix of sz: %d at i: %d and j: %d\n", sz, i, j);
+                pm[i][j] = 0;
+            }
+            else
+                pm[i][j] = orig[i][j];
+        }
+    }
+    return pm;
+}
+
+// pad a row and col of zeroes if isOdd
 int** setIndices(int** src, int i_jump, int j_jump, int d)
 {
     int** nm = newMatrix(d);
     int i, j;
+
     for(i = 0; i < d; i++)
+    {
         for(j = 0; j < d; j++)
+        {
+            // if((j == d - 1 || i == d - 1) && isOdd == 1)
+            // {
+            //     printf("padding zero at i: %d, j: %d \n", i, j);
+            //     nm[i][j] = 0;
+            // }
+            //
+            // else
             nm[i][j] = src[i + i_jump][j + j_jump];
+        }
+    }
     return nm;
 }
 
@@ -70,7 +104,6 @@ void subMatrices(int** res, int** a, int** b, int sz)
     return;
 }
 
-
 void printMatrix(int** matrix, int sz)
 {
     for(int i = 0; i < sz; i++)
@@ -82,21 +115,41 @@ int** strassen(int** a, int** b, int cut, int n)
 {
     int** c = newMatrix(n);
 
-    if(n <= cut){
+    if(n <= cut) {// || n == 1){
         conventional_multiply(c, a, b, n);
         return c;
     }
     else
     {
+        int nd;
         isOdd = 0;
         if(n % 2 != 0)
         {
 
+            // printf("\n\nprinting original a\n");
+            // printMatrix(a, n);
+            n = n + 1;
+            nd = n / 2;
+            // printf("in the odd case, n was: %d,   new n is: %d,   nd is now: %d\n", n-1, n, nd);
+            isOdd = 1;
+
+            // copy zeroes into a and b
+            a = paddedMatrix(a, n);
+            b = paddedMatrix(b, n);
+
+            // printf("printing padded a\n");
+            // printMatrix(a, n);
+
+        }
+        else
+        {
+            nd = n / 2;
+            isOdd = 0;
         }
 
         // TODO adjust a, b if odd
 
-        int nd = n / 2;
+
         int** A = setIndices(a, 0, 0, nd);
         int** B = setIndices(a, 0, nd, nd);
         int** C = setIndices(a, nd, 0, nd);
@@ -188,21 +241,36 @@ int** strassen(int** a, int** b, int cut, int n)
 
 
         int i, j;
+        // if isOdd, return everything except the last row and column
+        if(isOdd == 1)
+        {
+            printf("odd case, printing c1, c2, c3, c4\n");
+            printf("\n");
+            printMatrix(c1, nd);
+            printf("\n");
+            printMatrix(c2, nd);
+            printf("\n");
+            printMatrix(c3, nd);
+            printf("\n");
+            printMatrix(c4, nd);
+
+            //nd = nd - 1;
+
+        }
+
         for(i = 0; i < nd; i++)
         {
             for(j = 0; j < nd; j++)
             {
-                // if isOdd, return everything except the last row and column
-                if(isOdd == 1 && i < nd - 1 && j < nd - 1)
+                c[i][j] = c1[i][j];
+                if(i < nd - 1 && j < nd - 1)
                 {
-                    c[i][j] = c1[i][j];
                     c[i][j + nd] = c2[i][j];
                     c[i + nd][j] = c3[i][j];
                     c[i + nd][j + nd] = c4[i][j];
                 }
             }
         }
-
         return c;
     }
 }
@@ -221,24 +289,6 @@ int main(int argc, char* argv[])
         in = fopen(argv[3], "r");
         n = atoi(argv[2]);
         cut = atoi(argv[1]);
-        // int old_n = n;
-        //
-        // // calculate the new n
-        // // store old_n
-        // // round to next power of two: http://graphics.stanford.edu/~seander/bithacks.html#RoundUpPowerOf2Float
-        // unsigned int v;
-        // v = n;
-        // printf("%d\n", v);
-        //
-        // v--;
-        // v |= v >> 1;
-        // v |= v >> 2;
-        // v |= v >> 4;
-        // v |= v >> 8;
-        // v |= v >> 16;
-        // v++;
-        // n = v;
-        // printf("pow of 2 is: %d\n", n);
 
         int** a = newMatrix(n);
         int** b = newMatrix(n);
@@ -255,35 +305,15 @@ int main(int argc, char* argv[])
         int tot = 0;
         int val;
 
-        printf("old_n is: %d and new n: %d\n", old_n, n);
-
-        while(fscanf(in, "%d", &val))
+        while(fscanf(in, "%d", &val) != EOF)
         {
             if(tot < n * n)
             {
-                printf("i: %d,   j: %d,   tot: %d\n", i, j, tot);
-                if(j < old_n && a[i][j] == 0)
-                {
-                    //printf("setting %d  at i: %d,   and j: %d\n", val, i, j);
-                    a[i][j] = val;
-
-                }
-                else if(i + 1 < n)
-                {
-                    //for(k = old_n; k < n; k++)
-                    //if(j > old_n && j < n)
-                    a[i][j] = 0;
-                    a[i + 1][j - old_n] = val;
-                    printf("setting val: %d  at i: %d,   and j: %d\n", val, i+1, j - old_n);
-                }
-
+                a[i][j] = val;
             }
             if(tot >= n * n && tot < 2 * n * n)
             {
-                if(j < old_n)
-                    b[i][j] = val;
-                else
-                    b[i][j] = 0;
+                b[i][j] = val;
             }
             tot++;
             j++;
@@ -294,27 +324,27 @@ int main(int argc, char* argv[])
             }
             if(tot == n * n)
                 i = 0;
-            if(tot >= 2 * n * n)
-                break;
-        }
-        printf("\na\n");
-        printMatrix(a, n);
 
+        }
+        // printf("\na\n");
+        // int** new_a = paddedMatrix(a, n+1);
+        // printMatrix(new_a, n+1);
+        //
         // printf("\nb\n");
         // printMatrix(b, n);
 
         c = strassen(a, b, cut, n);
 
         // print diagonal matrices of size old_n - TODO test
-        // for(i = 0; i < old_n; i++)
-        // {
-        //     for(j = 0; j < old_n; j++)
-        //     {
-        //         if(i == j)
-        //             printf("%d\n", c[i][j]);
-        //     }
-        //
-        // }
+        printf("\n\n\nPRINTING DIAG ENTRIES OF C\n");
+        for(i = 0; i < n; i++)
+        {
+            for(j = 0; j < n; j++)
+            {
+                if(i == j)
+                    printf("%d\n", c[i][j]);
+            }
+        }
 
 
         // printf("PRINTING C: \n");
