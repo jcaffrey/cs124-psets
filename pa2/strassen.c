@@ -1,9 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-// TODO: free things and don't be a bad coder. -- free everything that is malloc'd
-int isOdd = 0;
-
 int** newMatrix(int sz) {
     // allocate a flat array of elements
     int** nm = (int**)malloc(sz * sizeof(*nm));
