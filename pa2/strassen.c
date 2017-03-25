@@ -1,8 +1,9 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+#define cut 128
+
 int** newMatrix(int sz) {
-    // allocate a flat array of elements
     int** nm = (int**)malloc(sz * sizeof(*nm));
     int i;
     for(i = 0; i < sz; i++)
@@ -27,7 +28,6 @@ int** padPow2Matrix(int** orig, int old_n, int n)
         {
             if(i >= old_n || j >= old_n)
             {
-                //printf("padding matrix of sz: %d at i: %d and j: %d\n", sz, i, j);
                 pm[i][j] = 0;
             }
             else
@@ -37,7 +37,6 @@ int** padPow2Matrix(int** orig, int old_n, int n)
     return pm;
 }
 
-// pad a row and col of zeroes if isOdd
 int** setIndices(int** src, int i_jump, int j_jump, int d)
 {
     int** nm = newMatrix(d);
@@ -54,13 +53,13 @@ int** setIndices(int** src, int i_jump, int j_jump, int d)
 }
 
 
-void conventional_multiply(int** c, int** a, int** b, int sz) // fix this to index into the right places!
+void conventional_multiply(int** c, int** a, int** b, int sz)
 {
     int i, k, j;
     for(i = 0; i < sz; i++)
         for(k = 0; k < sz; k++)
             for(j = 0; j < sz; j++)
-                c[i][j] += a[i][k] * b[k][j];  // need 2*sz here?
+                c[i][j] += a[i][k] * b[k][j];
     return;
 }
 
@@ -72,7 +71,7 @@ void addMatrices(int** res, int** a, int** b, int sz)
     {
         for(j = 0; j < sz; j++)
         {
-            res[i][j] = a[i][j] + b[i][j]; // need to multiply sz of b, a by twice times the number of times strassens was claled?
+            res[i][j] = a[i][j] + b[i][j];
         }
     }
     return;
@@ -86,7 +85,7 @@ void subMatrices(int** res, int** a, int** b, int sz)
     {
         for(j = 0; j < sz; j++)
         {
-            res[i][j] = a[i][j] - b[i][j]; // need to multiply sz of b, a by twice times the number of times strassens was claled?
+            res[i][j] = a[i][j] - b[i][j];
         }
     }
     return;
@@ -99,18 +98,17 @@ void printMatrix(int** matrix, int sz)
             printf("%d\n", matrix[i][j]);
 }
 
-int** strassen(int** a, int** b, int cut, int n)
+int** strassen(int** a, int** b, int n)
 {
     int** c = newMatrix(n);
 
-    if(n <= cut) {// || n == 1){
+    if(n <= cut)
+    {
         conventional_multiply(c, a, b, n);
         return c;
     }
     else
     {
-        // TODO adjust a, b if odd
-
         int nd = n/2;
         int** A = setIndices(a, 0, 0, nd);
         int** B = setIndices(a, 0, nd, nd);
@@ -152,13 +150,13 @@ int** strassen(int** a, int** b, int cut, int n)
         int** p6 = newMatrix(nd);
         int** p7 = newMatrix(nd);
 
-        p1 = strassen(A, s1, cut, nd);
-        p2 = strassen(s2, H, cut, nd);
-        p3 = strassen(s3, E, cut, nd);
-        p4 = strassen(D, s4, cut, nd);
-        p5 = strassen(s5, s6, cut, nd);
-        p6 = strassen(s7, s8, cut, nd);
-        p7 = strassen(s9, s10, cut, nd);
+        p1 = strassen(A, s1, nd);
+        p2 = strassen(s2, H, nd);
+        p3 = strassen(s3, E, nd);
+        p4 = strassen(D, s4, nd);
+        p5 = strassen(s5, s6, nd);
+        p6 = strassen(s7, s8, nd);
+        p7 = strassen(s9, s10, nd);
 
         int** c1 = newMatrix(nd);
         int** c2 = newMatrix(nd);
@@ -236,7 +234,6 @@ int** strassen(int** a, int** b, int cut, int n)
 int main(int argc, char* argv[])
 {
     int n;
-    int cut;
     FILE* in;
     if(argc != 4) {
         printf("Proper usage: ./strassen [optional] [dimension] [inputfile]\n");
@@ -246,7 +243,6 @@ int main(int argc, char* argv[])
     {
         in = fopen(argv[3], "r");
         n = atoi(argv[2]);
-        cut = atoi(argv[1]);
 
         int** a = newMatrix(n);
         int** b = newMatrix(n);
@@ -286,7 +282,8 @@ int main(int argc, char* argv[])
 
         int old_n = n;
 
-        // calculate the new n (next highest power of 2) - http://graphics.stanford.edu/~seander/bithacks.html#RoundUpPowerOf2Float
+        // calculate the new n (next highest power of 2):
+        //http://graphics.stanford.edu/~seander/bithacks.html#RoundUpPowerOf2Float
         unsigned int v;
         v = n;
         v--;
@@ -303,9 +300,8 @@ int main(int argc, char* argv[])
 
         int** c = newMatrix(n);
 
-        c = strassen(a, b, cut, n);
+        c = strassen(a, b, n);
 
-        // print diagonal matrices of size old_n - TODO test
         n = old_n;
         for(i = 0; i < n; i++)
         {

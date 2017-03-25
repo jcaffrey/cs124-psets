@@ -1,3 +1,4 @@
+# borrowed from CS61! all rights to cs61..
 # are we using clang?
 ISCLANG := $(shell if $(CC) --version | grep LLVM >/dev/null; then echo 1; else echo 0; fi)
 
