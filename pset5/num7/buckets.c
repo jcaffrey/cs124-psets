@@ -14,27 +14,34 @@ int main(void) {
 
 
     // task 1: throw 1B balls into 1B bins, 10 times
-    int r, i, j, k, tot;
+    int i, j, k, tot;
+    double r;
     for(k=0; k < sz; k++)
         A[k] = 0;
 
     for(i = 0; i < t; i++)
     {
-        tot = 0;
+        A[0] = B;
         for(j = 0; j < B; j++)
         {
-            r = (int) rand() % (int) B + 1;
+            r = (double) rand() / (double) RAND_MAX;
+            r = (int) (r * B);
+
+            tot = 0;
+
             for (k = 0; k < sz; k++)
             {
                 tot += A[k];
-                if (r >= tot)
+                if (r <= tot)
                 {
+                    A[k] -= 1;
+                    A[k + 1] += 1;
                     break;
                 }
             }
-            A[k] = A[k] - 1;
-            A[k + 1] = A[k + 1] + 1;
+
         }
+        // print trial resutls here and reset..
     }
 
     for(k = 0; k < sz; k++)
