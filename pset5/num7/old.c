@@ -20,21 +20,44 @@ int main(void) {
 
     for(i = 0; i < t; i++)
     {
-        tot = 0;
         for(j = 0; j < B; j++)
         {
-            r = (int) rand() % (int) B + 1;
-            for (k = 0; k < sz; k++)
+            // calc rand # (1B times)
+            r = (int)rand() % (int)B+1;
+            tot = 0;
+            k = 0;
+            // find first index where number of balls
+            while(r >= tot)
             {
                 tot += A[k];
-                if (r >= tot)
+                k++;
+                if (k >= sz - 1)
                 {
+                    //printf("Broke in bad way\n");
                     break;
                 }
             }
+            if (k > 2)
+            {
+                printf("%d\n", A[k]);
+                /* code */
+            }
             A[k] = A[k] - 1;
             A[k + 1] = A[k + 1] + 1;
-        }
+
+/*            
+            for(k = 0; k < sz; k++) // do this in a while?
+            {
+                tot += A[k];
+                if(r >= tot)
+                {
+                    // decrement k'th bucket, increment k+1'th bucket
+                    A[k] = A[k] - 1;
+                    A[k + 1] = A[k + 1] + 1;
+                    break;
+                }
+            }
+*/        }
     }
 
     for(k = 0; k < sz; k++)
