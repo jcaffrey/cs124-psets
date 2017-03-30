@@ -5,7 +5,7 @@
 
 #define B 1000000000
 #define sz 20
-#define t 1
+#define trials 10
 
 int main(void) {
     srand((unsigned) time(NULL));
@@ -16,16 +16,24 @@ int main(void) {
     // task 1: throw 1B balls into 1B bins, 10 times
     int i, j, k, tot;
     double r;
-    for(k=0; k < sz; k++)
-        A[k] = 0;
+    double r_two; // task 2
 
-    for(i = 0; i < t; i++)
+    for(i = 0; i < trials; i++)
     {
+        for(k=0; k < sz; k++)
+            A[k] = 0;
         A[0] = B;
         for(j = 0; j < B; j++)
         {
             r = (double) rand() / (double) RAND_MAX;
             r = (int) (r * B);
+
+            // task 2
+            r_two = (double) rand() / (double) RAND_MAX;
+            r_two = (int) (r_two * B);
+
+            if (r > r_two)
+                r = r_two;
 
             tot = 0;
 
@@ -42,10 +50,20 @@ int main(void) {
 
         }
         // print trial resutls here and reset..
+        // find index of max element
+        for(k = 0; k < sz; k++)
+        {
+            if (A[k] == 0 && A[k + 1] == 0)
+            {
+                printf("%d\n", k);
+                break;
+            }
+            //printf("bins: %d with balls: %d\n", A[k], k);
+
+        }
+
     }
 
-    for(k = 0; k < sz; k++)
-        printf("%d\n", A[k]);
 
     // task 2: repeat above, but pick two bins and throw ball in least loaded of the two bins
 
