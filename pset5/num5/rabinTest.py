@@ -34,16 +34,12 @@ def modExp(b, e, m):
 
 ######-------- vvvvvv PART 6 vvvvvv ----------###########
 m = "Give me an A"
+m = int(''.join(format(ord(ch), '08b') for ch in m),2)
+print
+print
+
 N = 46947848749720430529628739081
 E = 37267486263679235062064536973
 
-res = ''
-bin_m = 0
-#res = 0
-for ch in m:
-    print ord(ch)
-    print bin(ord(ch))
-    #res = res + str(ord(ch))
-# print res
-# bin_m = int(res)
-# print str(modExp(bin_m, E, N))
+print str(modExp(m, E, N))
+#27016764340118192395712492378
